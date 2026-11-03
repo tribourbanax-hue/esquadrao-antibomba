@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="google" content="notranslate">
+<meta name="theme-color" content="#3a1d4f">
+<title>Esquadrão Antibomba</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>/* Ideia: uma viagem pelo corpo. A vasa sanguínea é o caminho e cada setor tem a cor do seu tecido. */
+:root{
+  --tinta:#2a1738;      /* contorno dos desenhos e texto */
+  --vinho:#3a1d4f;      /* fundo do corpo */
+  --vaso:#c9324f;       /* caminho */
+  --pele:#fff6ec;       /* cartões */
+  --pavio:#ffb340;      /* destaque e ação */
+  --ok:#1fa971;
+  --er:#e0304a;
+  --mut:#7a6a86;
+  --cor:#c9324f;        /* cor do setor em jogo */
+  --disp:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --txt:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;height:100%}
+body{margin:0;background:var(--vinho);color:var(--tinta);font:600 16px/1.35 var(--txt)}
+#app{max-width:520px;margin:0 auto;padding:14px 16px 112px;min-height:100%;display:flex;flex-direction:column;gap:12px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+button:disabled{cursor:default}
+button:focus-visible{outline:3px solid var(--pavio);outline-offset:2px}
+h1,h2{margin:0;font-family:var(--disp);text-wrap:balance}
+.fig{display:block;width:100%;height:100%;overflow:visible}
+
+/* ---------- início ---------- */
+.topo{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;color:#fff}
+.logo{font:700 1.5rem/1 var(--disp);letter-spacing:.2px}
+.logo small{display:block;font:600 .8rem var(--txt);color:#e6cfe0;margin-top:4px}
+.conta{background:var(--pavio);color:var(--tinta);font:700 .85rem var(--disp);padding:5px 11px;border-radius:99px;white-space:nowrap;border:2px solid var(--tinta)}
+.quartel{background:var(--pele);border:3px solid var(--tinta);border-radius:20px;padding:12px;display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:center;box-shadow:0 5px 0 var(--tinta)}
+.anel{position:relative;width:92px;height:92px;border-radius:50%;display:grid;place-items:center;border:3px solid var(--tinta);background:conic-gradient(var(--ok) calc(var(--p)*1%),#eadfe9 0)}
+.anel>span{width:68px;height:68px;border-radius:50%;background:var(--pele);border:3px solid var(--tinta);display:grid;place-items:center;font:700 1.25rem var(--disp)}
+.q-t{font:700 1.15rem/1.15 var(--disp)}
+.q-s{color:var(--mut);font-size:.86rem}
+.aviso{color:#a84b00;font-weight:800;font-size:.85rem;margin-top:3px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip{background:var(--pele);border:3px solid var(--tinta);border-radius:15px;padding:9px;box-shadow:0 4px 0 var(--tinta);text-align:left;display:flex;flex-direction:column;min-height:58px}
+.chip b{font:700 1rem var(--disp)}
+.chip span{font-size:.76rem;color:var(--mut)}
+.chip:disabled{opacity:.6}
+.chip:active:not(:disabled),.op:active:not(:disabled),.btn:active,.setor:active .med{transform:translateY(3px)}
+.tit-cam{color:#fff;font:700 1.08rem var(--disp);margin-top:4px}
+
+/* caminho pelo corpo */
+.caminho{position:relative;height:calc(8*104px)}
+.caminho>svg{position:absolute;inset:0;width:100%;height:100%}
+.setor{position:absolute;display:flex;align-items:center;gap:8px;width:calc(50% + 40px);color:#fff}
+.setor.esq{left:0}
+.setor.dir{right:0;flex-direction:row-reverse;text-align:right}
+.med{flex:none;position:relative;width:84px;height:84px;border-radius:50%;border:3px solid var(--tinta);background:conic-gradient(var(--c) calc(var(--p)*1%),#fff 0);display:grid;place-items:center;box-shadow:0 4px 0 var(--tinta)}
+.med>div{width:64px;height:64px;border-radius:50%;background:var(--pele);border:3px solid var(--tinta);padding:6px}
+.setor>div:last-child{background:var(--tinta);border-radius:12px;padding:5px 9px}
+.s-nome{font:700 1rem/1.1 var(--disp);display:block}
+.s-pct{font-size:.8rem;color:#e6cfe0;display:block}
+.nota{color:#e6cfe0;font-size:.76rem;text-align:center;text-wrap:balance}
+.rodape{display:flex;flex-direction:column;align-items:center;gap:6px}
+.link{color:#e6cfe0;font-size:.85rem;padding:8px;font-weight:800}
+.perigo{color:#ffb0bb}
+
+/* barra fixa ao alcance do polegar */
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--pele);border-top:3px solid var(--tinta);z-index:5}
+.nav>div{max-width:520px;margin:0 auto;display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:6px;align-items:center;padding:8px 10px}
+.nav-b{font:700 .8rem var(--disp);display:flex;flex-direction:column;align-items:center;min-height:52px;justify-content:center;padding:2px}
+.nav-b .ic{width:30px;height:30px}
+.jogar{background:var(--pavio);border:3px solid var(--tinta);border-radius:16px;box-shadow:0 4px 0 var(--tinta);font:700 1.05rem/1.1 var(--disp);min-height:56px;padding:4px}
+.jogar small{display:block;font:800 .72rem var(--txt)}
+
+/* ---------- jogo ---------- */
+body.jogo{background:color-mix(in srgb,var(--cor) 45%,#1c1026)}
+.arena{position:relative;background:var(--cor);border:3px solid var(--tinta);border-radius:18px;height:88px;display:grid;grid-template-columns:40px 64px 1fr 58px;align-items:center;gap:4px;padding:0 8px;box-shadow:0 4px 0 var(--tinta);overflow:hidden;
+  background-image:radial-gradient(circle at 20% 110%,#ffffff33 0 26px,transparent 27px),radial-gradient(circle at 62% -10%,#ffffff26 0 34px,transparent 35px),radial-gradient(circle at 92% 90%,#0000001f 0 20px,transparent 21px)}
+.fechar{color:var(--tinta);background:var(--pele);border:3px solid var(--tinta);width:36px;height:36px;border-radius:50%;font-weight:800;line-height:1}
+.heroi{width:62px;height:62px}
+.pavio{position:relative;height:8px;background:#ffffff66;border-radius:9px;border:2px solid var(--tinta)}
+.pavio-f{position:absolute;left:0;top:0;bottom:0;background:var(--pavio);border-radius:9px;transition:width .25s}
+.contador{position:absolute;left:50%;top:-22px;transform:translateX(-50%);font:700 .8rem var(--disp);color:#fff;white-space:nowrap;text-shadow:0 1px 0 var(--tinta)}
+.bomba{width:56px;height:56px}
+.estouro{position:absolute;right:0;top:0;width:88px;height:88px;opacity:0;pointer-events:none}
+.acertou .heroi{animation:pula .4s}
+.acertou .bomba{filter:grayscale(1);opacity:.6;transition:.2s}
+.errou .estouro{animation:boom .5s forwards}
+.errou .bomba{opacity:0}
+.tag{color:#fff;font-size:.8rem;font-weight:800}
+.enunc{font:700 1.3rem/1.22 var(--disp);color:#fff}
+.centro{text-align:center}
+.area{display:flex;flex-direction:column;gap:9px}
+.op{background:var(--pele);border:3px solid var(--tinta);border-radius:15px;padding:12px 13px;text-align:left;width:100%;min-height:52px;box-shadow:0 4px 0 var(--tinta);font-weight:800}
+.op-vf{text-align:center;font:700 1.15rem var(--disp);min-height:84px}
+.vf{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.op.certa,.par.certa{background:#b9f0d4}
+.op.errada,.par.errada{background:#ffc2cc}
+.op:disabled{opacity:1}
+.dica{color:#fff;font-size:.82rem;text-align:center}
+/* pares */
+.pares{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:9px}
+.col{display:flex;flex-direction:column;gap:9px}
+.par{background:var(--pele);border:3px solid var(--tinta);border-radius:13px;padding:8px 6px;font-weight:800;font-size:.86rem;min-height:68px;flex:1;line-height:1.15;box-shadow:0 3px 0 var(--tinta)}
+.par-d{font-weight:700;font-size:.84rem}
+.par.sel{background:#ffe0a8}
+.par.feito{background:#b9f0d4;opacity:.75;box-shadow:none}
+.pisca{background:#ffe0a8}
+/* separar */
+.sep{display:flex;flex-direction:column;gap:10px}
+.sep-item{background:#fff;border:3px dashed var(--tinta);border-radius:16px;padding:18px 12px;text-align:center;font:700 1.25rem/1.15 var(--disp);min-height:92px;display:flex;align-items:center;justify-content:center}
+.sep-cats{display:flex;flex-wrap:wrap;gap:9px}
+.op-cat{flex:1 1 40%;text-align:center;font:700 1.02rem var(--disp)}
+/* imagens */
+.imgs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.imgs.tres{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.op-img{background:var(--pele);border:3px solid var(--tinta);border-radius:16px;box-shadow:0 4px 0 var(--tinta);padding:8px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:128px}
+.op-img .fig{width:100%;max-width:92px;height:auto;aspect-ratio:1;flex:none}
+.op-img span{font:700 .8rem/1.1 var(--disp);min-height:1.1em;text-align:center}
+.op-img.certa{background:#b9f0d4}
+.op-img.errada{background:#ffc2cc}
+/* diagrama */
+.diag-box{background:var(--pele);border:3px solid var(--tinta);border-radius:18px;padding:10px;box-shadow:0 4px 0 var(--tinta)}
+.diag{display:block;width:100%;height:auto}
+.hs{cursor:pointer}
+.hs.alvo{animation:brilha .7s 2}
+.hs.errada{opacity:.35}
+.rotulo{text-align:center;font:700 .95rem var(--disp);min-height:1.3em;margin-top:6px}
+
+/* resposta: gaveta que sobe de baixo */
+.fb{position:fixed;left:0;right:0;bottom:0;z-index:9;border-top:3px solid var(--tinta);animation:sobe .2s ease-out;max-height:70%;overflow:auto}
+.fb>div{max-width:520px;margin:0 auto;padding:12px 16px 16px;display:flex;flex-direction:column;gap:8px}
+.fb-topo{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:start}
+.fb-ok{background:#d3f5e3}
+.fb-er{background:#ffdbe0}
+.fb-fig{width:84px;height:84px;background:#fff;border:3px solid var(--tinta);border-radius:16px;padding:6px}
+.fb-t{font:700 1.15rem var(--disp)}
+.fb-c{font-weight:800;font-size:.92rem}
+.fb-e{font-size:.92rem}
+.fb-nome{font:700 .8rem var(--disp);color:var(--mut)}
+.fb-novo{background:var(--pavio);border:2px solid var(--tinta);border-radius:10px;padding:4px 10px;font:700 .85rem var(--disp);text-align:center}
+.btn{width:100%;display:flex;flex-direction:column;align-items:center;padding:13px;border-radius:15px;min-height:54px;justify-content:center;border:3px solid var(--tinta);box-shadow:0 4px 0 var(--tinta);background:var(--pele)}
+.b-t{font:700 1.05rem var(--disp)}
+.b-princ{background:var(--pavio)}
+.treme{animation:treme .28s}
+
+/* ---------- fim ---------- */
+.fim-ico{width:120px;height:120px;margin:14px auto 0}
+.painel{background:var(--pele);border:3px solid var(--tinta);border-radius:18px;padding:13px;display:flex;flex-direction:column;gap:5px;box-shadow:0 4px 0 var(--tinta)}
+.pct{font:700 2.2rem/1 var(--disp)}
+.pct-txt{color:var(--mut);font-size:.88rem}
+.barra{height:12px;background:#eadfe9;border:2px solid var(--tinta);border-radius:99px;overflow:hidden}
+.barra-f{height:100%;background:var(--ok)}
+.sim-lin{display:flex;justify-content:space-between;font-weight:800;padding:2px 0}
+.verde{color:var(--ok)}.vermelho{color:var(--er)}
+h2.claro{color:#fff;font-size:1.05rem}
+
+/* ---------- álbum ---------- */
+.cab{display:flex;align-items:center;gap:10px;color:#fff}
+.cab h1{font-size:1.3rem}
+.album-s{color:#fff;font:700 1rem var(--disp);margin-top:6px}
+.cartas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.carta{background:var(--pele);border:3px solid var(--tinta);border-radius:14px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 3px 0 var(--tinta)}
+.carta .fig{width:62px;height:62px}
+.carta span{font:700 .72rem/1.05 var(--disp);text-align:center;min-height:2.1em}
+.carta.fora{background:#d9cbdc;box-shadow:none}
+.carta.fora .fig{filter:grayscale(1) contrast(.7);opacity:.55}
+.veu{position:fixed;inset:0;background:#2a1738cc;display:grid;place-items:center;padding:20px;z-index:10}
+.ficha{background:var(--pele);border:3px solid var(--tinta);border-radius:22px;padding:18px;max-width:340px;width:100%;display:flex;flex-direction:column;gap:8px;text-align:center}
+.ficha .fig{width:150px;height:150px;margin:0 auto}
+.ficha h2{font-size:1.4rem}
+
+/* ---------- sessão final ---------- */
+.rev-intro{margin:0;color:#fff;font-size:.92rem}
+.rev-card{background:var(--pele);border:3px solid var(--tinta);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;box-shadow:0 4px 0 var(--tinta)}
+.rev-tag{color:var(--mut);font-size:.8rem;font-weight:800}
+.rev-q{font:700 1.05rem/1.2 var(--disp)}
+.rev-ok{color:var(--ok);font-weight:800;font-size:.92rem}
+.rev-corpo{display:flex;flex-direction:column;gap:8px}
+.rev-corpo[hidden]{display:none}
+.rev-b{border-left:5px solid var(--tinta);padding:2px 0 2px 10px;display:flex;flex-direction:column;font-size:.92rem}
+.rev-b strong{font:700 .85rem var(--disp)}
+.b-sl{border-color:var(--er)}.b-cf{border-color:var(--ok)}.b-in{border-color:var(--pavio)}
+
+@keyframes sobe{from{transform:translateY(100%)}to{transform:none}}
+@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pula{0%,100%{transform:none}40%{transform:translateY(-14px) rotate(-8deg)}}
+@keyframes boom{0%{opacity:1;transform:scale(.3)}60%{opacity:1;transform:scale(1.1)}100%{opacity:1;transform:scale(1)}}
+@keyframes brilha{50%{filter:brightness(1.5)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.errou .estouro{opacity:1}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav id="nav"></nav>
+<script>// Banco de questões. Fonte: Microbiologia OSCH.pdf
+// nivel b = página com bomba | nivel c = contexto do mesmo tema
+// m = múltipla (1ª opção é a certa) | v = verdadeiro/falso | p = pares | s = separar | o = ordem
+const SETORES = {
+  cel: { nome: "Célula", ico: "🧫" },
+  gen: { nome: "DNA e proteínas", ico: "🧬" },
+  san: { nome: "Sangue", ico: "🩸" },
+  imu: { nome: "Imunidade", ico: "🛡️" },
+  bac: { nome: "Bactérias", ico: "🦠" },
+  vir: { nome: "Vírus", ico: "👾" },
+  pro: { nome: "Protozoários", ico: "🦟" },
+  fun: { nome: "Fungos", ico: "🍄" },
+};
+const Q = [];
+const m = (s, n, p, q, o, e) => Q.push({ t: "m", s, n, p, q, o, e });
+const v = (s, n, p, q, a, e) => Q.push({ t: "v", s, n, p, q, a, e });
+const pr = (s, n, p, q, pares, e) => Q.push({ t: "p", s, n, p, q, pares, e });
+const so = (s, n, p, q, cats, itens, e) => Q.push({ t: "s", s, n, p, q, cats, itens, e });
+const or = (s, n, p, q, passos, e) => Q.push({ t: "o", s, n, p, q, passos, e });
+const im = (s, n, p, q, op, e) => Q.push({ t: "i", s, n, p, q, op, e, fig: op[0] }); // escolher a imagem (1ª é a certa)
+const di = (s, n, p, q, diag, alvo, e, fig) => Q.push({ t: "d", s, n, p, q, diag, alvo, e, fig }); // tocar na estrutura
+
+/* ===================== CÉLULA ===================== */
+m("cel","b",3,"O que a microbiologia estuda?",["Os microrganismos (as vidas pequenas)","Somente os órgãos do corpo","Somente as doenças hereditárias","Os ossos e os músculos"],"Micro = pequeno, bio = vida, logia = estudo.");
+pr("cel","b",3,"Ligue cada parte da palavra ao significado",[["Micro","Pequeno"],["Bio","Vida"],["Logia","Estudo"]],"Microbiologia = estudo das vidas pequenas.");
+v("cel","b",3,"O estudo da microbiologia exige o uso do microscópio.",true,"Os microrganismos não são vistos a olho nu.");
+m("cel","b",3,"Qual destes NÃO é objeto de estudo da microbiologia?",["Vértebras","Bactérias","Fungos","Protozoários"],"A aula lista células, bactérias, fungos, vírus, algas e protozoários.");
+m("cel","b",19,"A palavra célula vem do latim cella, que significa:",["Câmara","Vida","Pequeno","Núcleo"],"Cella = câmara.");
+v("cel","b",19,"As células são as menores unidades funcionais, estruturais e genéticas dos seres vivos.",true,"Essa é a definição da aula. Vale decorar.");
+m("cel","b",19,"Quantas células o corpo humano possui, aproximadamente?",["30 trilhões","30 bilhões","3 trilhões","300 milhões"],"Cerca de 30 trilhões, em 200 formas diferentes.");
+m("cel","b",19,"Quantas formas diferentes de células possuímos, aproximadamente?",["200","20","2.000","46"],"São 30 trilhões de células em cerca de 200 formas.");
+m("cel","b",19,"Como as células podem ser classificadas?",["Eucariontes ou procariontes","Aeróbias ou anaeróbias","Dominantes ou recessivas","Inatas ou adaptativas"],"Euca = núcleo verdadeiro. Proca = sem núcleo formado.");
+v("cel","b",19,"As células se diferem em forma e função dependendo de onde se encontram.",true,"O neurônio e a hemácia são exemplos bem diferentes.");
+so("cel","c",20,"Procarionte ou eucarionte?",["Procarionte","Eucarionte"],[["Bactérias",0],["Archeas",0],["Cianobactérias",0],["Protozoários",1],["Fungos",1],["Seres humanos",1],["Plantas",1]],"Procariontes formam o antigo reino monera.");
+pr("cel","c",22,"Estruturas da bactéria: ligue à função",[["Cápsula","Escudo protetor"],["Parede celular","Dá forma, é rígida"],["Membrana plasmática","Controla entrada e saída"],["Citoplasma","Onde ocorrem as reações"],["Nucleoide","DNA sem núcleo formado"],["Ribossomos","Produzem proteínas"],["Flagelo","Locomoção"],["Fímbrias","Fixação, como ganchos"]],"Bactéria tem DNA, mas não tem núcleo formado.");
+v("cel","b",25,"A célula eucarionte possui núcleo verdadeiro.",true,"Dentro do núcleo fica o DNA, organizado em cromossomos.");
+v("cel","c",22,"A célula procarionte possui um núcleo bem formado.",false,"Ela tem nucleoide: o DNA fica sem núcleo formado.");
+m("cel","b",25,"Na célula eucarionte, onde fica o DNA?",["No núcleo, organizado em cromossomos","Solto no citoplasma","Na membrana plasmática","Nos lisossomos"],"O núcleo guarda a informação e comanda a célula.");
+m("cel","b",25,"Qual é a função da membrana plasmática?",["Controlar a entrada e a saída de substâncias","Produzir energia","Digerir a célula","Guardar o DNA"],"Ela envolve toda a célula e controla o que entra e sai.");
+m("cel","b",25,"O citoplasma é a região:",["Entre a membrana e o núcleo","Dentro do núcleo","Fora da membrana","Dentro da mitocôndria"],"Ali ficam organelas, água, proteínas, sais minerais e citoesqueleto.");
+pr("cel","c",26,"Organelas: ligue à função",[["Mitocôndria","Energia (ATP)"],["RER","Síntese de proteínas"],["REL","Lipídios e desintoxicação"],["Complexo de Golgi","Modifica, empacota, secreta"],["Lisossomos","Digestão celular"],["Peroxissomos","Degrada substâncias tóxicas"]],"RER tem ribossomos, por isso faz proteínas.");
+m("cel","c",26,"Qual organela produz a “moeda energética” da célula (ATP)?",["Mitocôndria","Lisossomo","Complexo de Golgi","Peroxissomo"],"Mitocôndria = usina de energia.");
+m("cel","b",27,"Qual destas NÃO é uma função geral das células na aula?",["Fotossíntese","Produção de energia","Síntese de proteínas","Manutenção da homeostase"],"As cinco funções: energia, proteínas, reprodução, transporte e homeostase.");
+v("cel","b",27,"Reprodução (divisão celular) e transporte de substâncias são funções gerais das células.",true,"Junto com energia, síntese de proteínas e homeostase.");
+m("cel","b",28,"As células especializadas são chamadas de “unidade funcional” porque:",["São responsáveis pela função característica do órgão","São as maiores células do corpo","Existem apenas no sangue","Não possuem núcleo"],"Cada órgão tem células que sustentam a sua função.");
+pr("cel","c",29,"Ligue a célula ao órgão",[["Neurônio","Cérebro"],["Cardiomiócito","Coração"],["Pneumócito","Pulmões"],["Hepatócito","Fígado"],["Célula tubular","Rim"],["Enterócito","Intestino"],["Célula folicular","Tireoide"],["Queratinócito","Pele"],["Fotorreceptor","Retina"],["Oócito","Ovário"]],"Hepato = fígado. Cardio = coração. Pneumo = pulmão.");
+pr("cel","c",30,"Ligue a célula à função",[["Neurônio","Transmite impulsos nervosos"],["Cardiomiócito","Contração do coração"],["Pneumócito","Trocas gasosas e surfactante"],["Hepatócito","Metabolismo e detoxificação"],["Enterócito","Absorve nutrientes"],["Melanócito","Produz melanina"],["Célula folicular","Produz T3 e T4"]],"Tireoide produz T3 e T4 pela célula folicular.");
+m("cel","c",30,"Qual célula do pâncreas produz insulina?",["Célula β pancreática","Hepatócito","Enterócito","Célula folicular"],"Beta = insulina.");
+m("cel","c",31,"Qual célula dá origem às células sanguíneas?",["Célula-tronco hematopoética","Osteócito","Célula ciliada","Oócito"],"Ela fica na medula óssea.");
+m("cel","c",60,"Por que o antibiótico destrói a bactéria e não as nossas células?",["Porque a célula da bactéria (procarionte) é diferente da humana (eucarionte)","Porque as nossas células não têm membrana","Porque a bactéria não tem DNA","Porque a célula humana não tem proteínas"],"É a diferença de estrutura que permite esse alvo.");
+pr("cel","c",16,"Quem fez o quê?",[["Robert Hooke","Viu a cortiça e criou o nome célula"],["Leeuwenhoek","Viu os “animálculos”"],["Schleiden e Schwann","Teoria Celular"],["Ruska e Knoll","Microscópio eletrônico"]],"Hooke = 1665, cortiça. Leeuwenhoek = 1674, animálculos.");
+v("cel","c",18,"Pela Teoria Celular, toda célula tem origem de outra célula.",true,"Também é a unidade estrutural e funcional do ser vivo.");
+
+/* ===================== DNA E PROTEÍNAS ===================== */
+v("gen","b",51,"Toda predisposição genética envolve hereditariedade, mas nem toda hereditariedade significa doença.",true,"Essa frase é da aula.");
+m("gen","b",51,"O que é predisposição genética?",["Uma herança que pode aumentar o risco de desenvolver uma doença","A certeza de que a pessoa terá a doença","Uma infecção transmitida pelos pais","Uma doença causada por vírus"],"É tendência, não destino.");
+m("gen","b",51,"Hereditariedade é:",["O que você recebe geneticamente da família","Um hábito de vida","Uma infecção adquirida","A produção de anticorpos"],"A aula resume como o que vem da família.");
+v("gen","b",51,"Ter predisposição genética significa que a pessoa com certeza terá a doença.",false,"Ela é tendência. Hábitos saudáveis podem reduzir a chance.");
+v("gen","b",51,"Quem tem mãe e avó com diabetes pode reduzir a chance de ter a doença com hábitos saudáveis.",true,"Esse é o exemplo do slide.");
+so("gen","b",52,"Hereditariedade ou predisposição?",["Hereditariedade","Predisposição"],[["Anemia falciforme",0],["Daltonismo",0],["Síndromes cromossômicas",0],["Diabetes",1],["Hipertensão",1],["Câncer",1]],"Falciforme e daltonismo são hereditários. Diabetes, hipertensão e câncer são tendência.");
+pr("gen","b",58,"Ligue cada molécula ao papel dela",[["DNA","Guarda a informação"],["RNA","Leva a informação"],["Proteína","Executa a função"]],"Guarda, leva, executa.");
+v("gen","b",58,"São as proteínas que executam praticamente todas as funções do organismo.",true,"O DNA guarda e o RNA leva, mas a proteína faz.");
+m("gen","c",54,"Onde vive o DNA?",["No núcleo: ele não sai de dentro","No citoplasma","Nos ribossomos","Na corrente sanguínea"],"Quem sai do núcleo é o RNA.");
+m("gen","c",55,"Quem leva a informação para fora do núcleo?",["RNA","DNA","Hemoglobina","Mitocôndria"],"RNA é o mensageiro do DNA.");
+or("gen","c",55,"Coloque em ordem as fases da síntese de proteínas",["Transcrição: cópia de parte do DNA","Mensagem: RNA leva a informação","Tradução: formam-se as proteínas"],"Transcreve, leva, traduz.");
+m("gen","c",55,"Na síntese de proteínas, a transcrição é:",["A cópia de parte do DNA","A união dos aminoácidos","A divisão da célula","A entrada do vírus"],"A tradução é que forma a proteína a partir de aminoácidos.");
+m("gen","c",55,"O RNA leva a informação até qual estrutura?",["Ribossomos","Lisossomos","Mitocôndrias","Peroxissomos"],"É nos ribossomos que a proteína é produzida.");
+pr("gen","c",59,"Função da proteína: ligue ao exemplo",[["Enzimas","Digestivas"],["Estrutura","Colágeno e queratina"],["Transporte","Hemoglobina"],["Defesa","Anticorpos"],["Comunicação","Insulina"],["Movimento","Actina e miosina"]],"Seis funções da aula.");
+m("gen","c",59,"Actina e miosina são proteínas ligadas a qual função?",["Contração muscular","Transporte de oxigênio","Controle da glicemia","Formação do cabelo"],"Movimento = actina e miosina.");
+m("gen","c",59,"Qual proteína leva oxigênio no sangue?",["Hemoglobina","Insulina","Queratina","Colágeno"],"Hemoglobina = transporte.");
+m("gen","c",59,"Colágeno e queratina formam:",["Pele, cabelo, unhas e tecidos","Anticorpos","Enzimas digestivas","Hormônios"],"São proteínas de estrutura.");
+
+/* ===================== SANGUE ===================== */
+m("san","b",63,"Qual é o principal local do sistema hematopoiético?",["Medula óssea","Fígado","Pâncreas","Rim"],"A medula dá origem às células do sangue.");
+m("san","b",63,"O sistema hematopoiético é responsável por:",["Produção, maturação e renovação das células do sangue","Digestão dos alimentos","Produção de hormônios da tireoide","Filtragem da urina"],"Ele repõe bilhões de células por dia.");
+v("san","b",63,"O sistema hematopoiético usa células-tronco para repor bilhões de células todos os dias.",true,"Isso garante oxigênio, defesa e coagulação.");
+m("san","b",64,"Qual é a proporção de plasma no sangue, segundo a aula?",["55%","15%","75%","95%"],"Plasma = 55%.");
+m("san","b",64,"Qual destas NÃO é função do sangue?",["Produzir queratina","Transportar oxigênio","Transportar hormônios","Regular a coagulação"],"Sangue também defende e elimina substâncias tóxicas.");
+v("san","b",64,"O sangue ajuda a eliminar substâncias tóxicas e a defender o organismo.",true,"Além de transportar oxigênio, nutrientes e hormônios.");
+so("san","c",65,"Sangue arterial ou venoso?",["Arterial","Venoso"],[["Vermelho vivo",0],["Oxigenado",0],["Mais escuro, cor de vinho",1],["Desoxigenado",1]],"Mais oxigênio = vermelho mais vivo.");
+so("san","c",67,"Qual linhagem dá origem?",["Mielóide","Linfóide"],[["Hemácias",0],["Plaquetas",0],["Neutrófilos",0],["Monócitos",0],["Linfócito T",1],["Linfócito B",1],["Célula NK",1]],"Linfóide = linfócitos. Quase todo o resto é mielóide.");
+m("san","b",69,"Outro nome das hemácias:",["Eritrócitos","Leucócitos","Trombócitos","Linfócitos"],"Também chamadas de glóbulos vermelhos.");
+m("san","b",69,"Por que a hemácia não ter núcleo é uma vantagem?",["Permite carregar mais hemoglobina","Faz ela viver para sempre","Permite produzir anticorpos","Faz ela coagular melhor"],"Sem núcleo, sobra espaço para a hemoglobina.");
+v("san","b",69,"As hemácias possuem núcleo.",false,"Não têm núcleo, o que permite carregar mais hemoglobina.");
+v("san","b",69,"A hemoglobina é rica em ferro e dá a cor vermelha ao sangue na presença de oxigênio.",true,"O ferro se liga ao O₂.");
+m("san","b",69,"Quais são os elementos figurados mais numerosos do sangue?",["Hemácias","Plaquetas","Neutrófilos","Linfócitos"],"Os glóbulos vermelhos são os mais numerosos.");
+pr("san","b",70,"Ligue a anemia à característica",[["Ferropriva","Falta de ferro: hemácias pequenas e descoradas"],["Megaloblástica","Falta de B12: hemácias grandes e imaturas"],["Falciforme","Mutação genética: forma de meia lua"]],"Ferro = ferropriva. B12 = megaloblástica. Foice = falciforme.");
+m("san","b",70,"O que é anemia, segundo a aula?",["Diminuição ou malformação das hemácias","Aumento de plaquetas","Falta de linfócitos","Excesso de hemoglobina"],"O exame que mede é o hemograma.");
+m("san","b",70,"A anemia megaloblástica é causada pela deficiência de:",["Vitamina B12","Ferro","Vitamina C","Cálcio"],"As hemácias ficam grandes, imaturas e morrem antes de amadurecer.");
+m("san","b",70,"Qual anemia é causada por mutação genética que deforma a hemácia?",["Falciforme","Ferropriva","Megaloblástica","Nenhuma delas"],"A hemácia fica em forma de meia lua.");
+m("san","b",70,"Qual exame mede a quantidade e a saúde das hemácias?",["Hemograma","Coloração de Gram","Urina tipo 1","Raio X"],"Hemograma.");
+m("san","b",70,"Qual dieta ajuda a manter a saúde das hemácias?",["Rica em ferro, vitamina B12 e ácido fólico","Rica em açúcar","Sem nenhuma proteína","Rica apenas em gordura"],"Junto com a hidratação.");
+v("san","c",79,"Na anemia falciforme, as hemácias podem se aglomerar e obstruir o fluxo de sangue.",true,"A hemoglobina forma um bastão rígido e deforma a hemácia.");
+m("san","b",71,"O que são as plaquetas?",["Fragmentos celulares essenciais para a coagulação","Células com núcleo que carregam O₂","Células que produzem anticorpos","Proteínas do plasma"],"São produzidas na medula óssea.");
+m("san","b",71,"Quanto tempo as plaquetas circulam, aproximadamente?",["7 a 10 dias","1 hora","120 dias","1 ano"],"Vida útil de 7 a 10 dias.");
+m("san","b",71,"Qual é a principal função das plaquetas?",["Formar o coágulo e cessar sangramentos","Transportar oxigênio","Fagocitar bactérias","Produzir histamina"],"Hemostasia.");
+v("san","b",71,"As plaquetas são produzidas na medula óssea.",true,"Assim como as outras células do sangue.");
+or("san","c",72,"Ordem da ação das plaquetas na lesão do vaso",["Adesão plaquetária","Ativação plaquetária","Agregação plaquetária"],"Gruda, ativa, agrega.");
+m("san","b",73,"Pontos vermelhos na pele por plaquetas baixas são chamados de:",["Petéquias","Trombos","Bolhas","Cistos"],"Podem vir com hematomas e sangramento.");
+m("san","b",73,"Qual é uma causa comum de plaquetas baixas citada na aula?",["Dengue","Hipertensão","Cárie","Miopia"],"Também infecções, falta de vitaminas, autoimunes e problemas na medula.");
+m("san","b",73,"Plaquetas altas (trombocitose) favorecem:",["Formação de trombos","Petéquias","Anemia ferropriva","Queda de cabelo"],"Plaqueta demais = trombo.");
+pr("san","b",75,"Ligue o leucócito à função",[["Neutrófilos","1ª linha, infecções bacterianas"],["Monócitos","Dão origem aos macrófagos"],["Eosinófilos","Parasitas e alergias"],["Basófilos","Alergias e histamina"],["Macrófagos","Fagocitose"]],"Eosinófilo = parasita. Basófilo = histamina.");
+m("san","b",75,"Qual leucócito é a primeira linha de defesa, principalmente contra bactérias?",["Neutrófilo","Eosinófilo","Basófilo","Linfócito B"],"Neutrófilo = primeira linha.");
+m("san","b",75,"Qual leucócito combate parasitas?",["Eosinófilo","Neutrófilo","Monócito","Linfócito T"],"Também age em reações alérgicas.");
+m("san","b",75,"Qual leucócito está ligado à liberação de histamina?",["Basófilo","Monócito","Neutrófilo","Macrófago"],"Basófilo = alergia e histamina.");
+m("san","b",75,"Os monócitos dão origem a:",["Macrófagos","Hemácias","Plaquetas","Linfócitos"],"Os macrófagos fazem fagocitose.");
+m("san","b",75,"Os leucócitos também são conhecidos como:",["Glóbulos brancos","Glóbulos vermelhos","Plaquetas","Eritrócitos"],"Células de defesa produzidas na medula.");
+pr("san","b",76,"Ligue o linfócito à função",[["Linfócito T","Coordena e destrói células infectadas"],["Linfócito B","Produz anticorpos"],["Célula NK","Resposta rápida e inespecífica"]],"B de “bala”: dispara anticorpos.");
+m("san","b",76,"Qual a proporção de linfócitos entre os leucócitos?",["20 a 40%","1 a 2%","60 a 80%","Menos de 1%"],"Representam 20 a 40%.");
+m("san","b",76,"Qual célula produz anticorpos específicos?",["Linfócito B","Linfócito T","Célula NK","Neutrófilo"],"B = anticorpos.");
+v("san","b",76,"As células NK dão resposta rápida contra infecções e tumores.",true,"NK = Natural Killer.");
+m("san","b",77,"Na clínica, o técnico deve ficar atento a:",["Fraqueza, falta de ar sem causa, desmaios e sangramentos repentinos","Apenas à cor do cabelo","Apenas à altura do paciente","Apenas à queixa de sede"],"Também taquicardia, taquipneia, confusão mental e hematomas.");
+v("san","b",77,"O uso de anticoagulantes é um dado que o técnico deve observar.",true,"Junto com hematomas e sangramentos repentinos.");
+pr("san","c",78,"Hemograma: ligue o item ao significado",[["VCM","Tamanho das hemácias"],["HCM","Hb nas hemácias"],["CHCM","% de Hb na hemácia"],["RDW","Variação do tamanho"],["Hematócrito","% ocupada por hemácias"],["Hemoglobina","Proteína que carrega O₂"]],"Hemograma tem série vermelha, série branca e plaquetas.");
+pr("san","c",78,"Hemograma, série branca: ligue à defesa",[["Neutrófilos","Bactérias"],["Eosinófilos","Parasitas e algumas alergias"],["Basófilos","Reações alérgicas"],["Linfócitos","Vírus e produção de anticorpos"],["Monócitos","Inflamação e fagocitose"]],"Tabela do hemograma da aula.");
+
+/* ===================== IMUNIDADE ===================== */
+m("imu","b",82,"Qual destes NÃO é órgão do sistema imunológico na aula?",["Estômago","Timo","Baço","Linfonodos"],"Timo, baço, medula óssea, tonsilas, linfonodos e vasos linfáticos.");
+m("imu","b",82,"O sistema imunológico é responsável por:",["Defender o organismo","Produzir a urina","Digerir a comida","Sustentar o corpo"],"É uma grande barreira de proteção.");
+v("imu","b",82,"Tonsilas e medula óssea fazem parte do sistema imunológico.",true,"Junto com timo, baço, linfonodos e vasos linfáticos.");
+m("imu","c",83,"Qual célula fagocita restos de células e microrganismos e inicia a resposta imune?",["Macrófago","Hemácia","Plaqueta","Linfócito B"],"Macrófago = fagocitose.");
+v("imu","c",83,"Os linfócitos B e T reconhecem e destroem microrganismos.",true,"É a resposta específica.");
+so("imu","b",85,"Qual tipo de barreira da imunidade inata?",["Física","Química","Biológica"],[["Pelos",0],["Cílios",0],["Muco",0],["Pele",0],["Suco gástrico",1],["Suor",1],["Neutrófilos",2],["Macrófagos",2]],"Física bloqueia, química destrói, biológica são as células.");
+m("imu","b",85,"A imunidade inata é:",["Natural e congênita: a primeira linha de defesa","Adquirida apenas por vacina","Produzida só depois de adulto","Exclusiva dos linfócitos"],"Nascemos com ela.");
+v("imu","b",85,"Quando a imunidade inata não é suficiente, a imunidade adquirida entra em ação.",true,"A inata vem primeiro.");
+so("imu","b",86,"Inata ou adaptativa?",["Inata","Adaptativa"],[["Congênita",0],["Primeira linha de defesa",0],["Pele e muco",0],["Adquirida ao longo da vida",1],["Vacinas",1],["Depende de linfócitos",1]],"Inata: nasce com você. Adaptativa: você adquire.");
+m("imu","b",86,"A imunidade adaptativa depende da ativação de quais células?",["Linfócitos","Hemácias","Plaquetas","Queratinócitos"],"Ela age diante de um problema específico.");
+v("imu","b",86,"As vacinas estão ligadas à imunidade adaptativa.",true,"É a defesa adquirida ao longo da vida.");
+m("imu","b",87,"Anticorpos também são chamados de:",["Imunoglobulinas","Antígenos","Histaminas","Hemoglobinas"],"São proteínas produzidas pelos linfócitos.");
+m("imu","b",87,"Antígeno é:",["Substância capaz de desencadear resposta do sistema imune","Uma célula de defesa","Um tipo de anticorpo","Uma proteína do plasma"],"Exemplos: alérgeno, microrganismo e corpo estranho.");
+m("imu","b",87,"O modelo “chave-fechadura” significa que cada anticorpo:",["Se liga apenas a um determinado antígeno","Se liga a qualquer antígeno","Destrói qualquer célula","Só atua no intestino"],"Atuação específica.");
+v("imu","b",87,"Um mesmo anticorpo atua igualmente contra qualquer antígeno.",false,"Cada anticorpo é específico para um antígeno (chave-fechadura).");
+m("imu","b",87,"Depois de se ligar ao antígeno, o anticorpo pode:",["Destruir, inativar ou sinalizar para a fagocitose","Virar uma hemácia","Formar um coágulo","Produzir um novo vírus"],"Sinaliza para os leucócitos fagocitarem.");
+m("imu","b",87,"Qual destes pode agir como antígeno?",["Um alérgeno","A água do plasma","Um linfócito sadio do próprio corpo","Uma hemácia sadia do próprio corpo"],"Alérgeno, microrganismo ou corpo estranho.");
+m("imu","b",90,"Memória imunológica é:",["A capacidade de recordar um invasor já combatido e reagir rápido","A perda das células de defesa","Uma alergia a medicamentos","O início de uma doença autoimune"],"Permite defesa rápida e eficaz em futuras invasões.");
+v("imu","b",90,"A memória imunológica pode dar resposta rápida antes mesmo dos primeiros sinais e sintomas.",true,"Por isso protege contra doenças.");
+m("imu","b",91,"Febre muito alta ou persistente, queda de pressão, taquicardia e confusão mental: pensar em:",["Sepse: emergência","Alergia leve","Anemia ferropriva","Cãibra"],"Sepse é emergência.");
+v("imu","b",91,"Alterações no sistema imune aumentam o risco de infecção e podem piorar a recuperação.",true,"E podem causar doenças autoimunes.");
+pr("imu","c",92,"Ligue a alteração à doença",[["Imunodeficiência","HIV/AIDS"],["Doença autoimune","Lúpus"],["Alergia","Asma"]],"Autoimune: o corpo ataca a si mesmo.");
+m("imu","c",92,"Na doença autoimune:",["O corpo ataca a si mesmo","A defesa fica exagerada contra pólen","Faltam hemácias","Falta ferro"],"Exemplos: lúpus e artrite reumatoide.");
+m("imu","c",92,"Assistência de enfermagem em alterações imunes inclui:",["Observar febre, sinais de infecção e controle de isolamento","Suspender todo alimento","Evitar a higiene das mãos","Dispensar a vigilância"],"Cuidar também de imunossuprimidos.");
+
+/* ===================== BACTÉRIAS E PATÓGENOS ===================== */
+m("bac","b",100,"Qual destes NÃO favorece o surgimento de doenças, segundo a aula?",["Água limpa","Falta de saneamento básico","Proliferação de roedores","Contato com dejetos contaminantes"],"A falta de água limpa é que favorece doenças.");
+v("bac","b",100,"Falta de higiene, proliferação de insetos e de roedores favorecem doenças.",true,"Junto com a falta de saneamento e de água limpa.");
+m("bac","b",110,"Qual é a mensagem final da aula sobre microrganismos?",["Mesmo pequenos, podem impactar milhões de vidas","São inofensivos","Só atingem plantas","Não precisam ser estudados"],"Só cuidamos com segurança daquilo que conhecemos.");
+m("bac","c",109,"O que causou as grandes epidemias da história estudadas na aula?",["Microrganismos","Guerras","Desastres naturais","Falta de sono"],"Seres invisíveis, porém muito poderosos.");
+m("bac","c",101,"A Peste Negra é causada por qual bactéria, transmitida por qual vetor?",["Yersinia pestis, por pulgas de ratos","Vibrio cholerae, por água","Salmonella typhi, por mosquitos","Treponema pallidum, por contato sexual"],"Y de Yersinia, P de peste e de pulga.");
+m("bac","c",104,"Quem relacionou a cólera à água contaminada, em 1850?",["John Snow","Robert Hooke","Louis Pasteur","Galileu Galilei"],"Em 1883, Robert Koch identificou o Vibrio cholerae.");
+m("bac","c",104,"A cólera mata principalmente por:",["Desidratação severa","Hemorragia cerebral","Fratura óssea","Falta de insulina"],"Persiste onde falta saneamento básico.");
+pr("bac","c",108,"HIV/AIDS: ligue o ano ao fato",[["1983","Identificação do vírus HIV"],["1987","Início dos testes com AZT"],["1988","Programa Nacional DST/Aids e SUS"],["1996","Lei 9.313: remédios gratuitos"]],"Linha do tempo da aula.");
+m("bac","b",112,"As bactérias são organismos:",["Unicelulares, procariontes e assexuados","Pluricelulares e eucariontes","Acelulares","Unicelulares e eucariontes"],"Reprodução por divisão binária.");
+v("bac","b",112,"Bactérias são seres eucariontes.",false,"São procariontes.");
+m("bac","b",112,"O nome científico da bactéria tem:",["Gênero e espécie","Reino e filo","Só a espécie","Só o gênero"],"Exemplos: Staphylococcus aureus e Escherichia coli.");
+m("bac","b",112,"Quanto à forma, as bactérias são classificadas em:",["Cocos, bacilos, espirilos e vibriões","Icosaédricas e helicoidais","Leveduras e bolores","Ciliadas e flageladas"],"A forma é a sua “identidade visual”.");
+m("bac","b",112,"Quanto ao oxigênio, as bactérias podem ser:",["Aeróbias e anaeróbias","Envelopadas e não envelopadas","Inatas e adaptativas","Dominantes e recessivas"],"Há também as facultativas.");
+so("bac","b",112,"Isto é classificação de bactéria por:",["Forma","Oxigênio","Coloração"],[["Cocos",0],["Bacilos",0],["Aeróbia",1],["Anaeróbia",1],["Gram-positiva",2],["Gram-negativa",2]],"Forma, oxigênio e Gram são três jeitos de classificar.");
+pr("bac","c",113,"Ligue a morfologia ao formato",[["Cocos","Arredondadas"],["Bacilos","Bastonetes"],["Vibriões","Formato de vírgula"],["Espirilos","Espiraladas"]],"Morfologia = formato.");
+m("bac","c",113,"Por que a morfologia bacteriana é importante?",["Identificação, diagnóstico, tratamento e controle de infecção","Define o tipo sanguíneo","Mede a glicemia","Serve só para pesquisa"],"É a “identidade visual” da bactéria.");
+m("bac","b",114,"A reprodução das bactérias é:",["Assexuada, por divisão binária (cissiparidade)","Sexuada, por gametas","Por brotamento","Por esporos de pólen"],"Uma bactéria se divide em duas.");
+so("bac","b",115,"Que tipo de bactéria é?",["Aeróbia","Anaeróbia","Facultativa"],[["Precisa de oxigênio para crescer",0],["O oxigênio pode ser letal",1],["Encontrada em tecidos necróticos",1],["Encontrada em solos profundos",1],["Vive com ou sem oxigênio",2]],"Facultativa = tanto faz.");
+m("bac","b",115,"Bactérias anaeróbias são encontradas em:",["Solos profundos e tecidos necróticos","Topo de montanhas","Superfície de folhas ao sol","Ar puro"],"O oxigênio é um problema para elas.");
+v("bac","b",115,"Bactérias facultativas vivem e crescem com ou sem oxigênio.",true,"Facultativa = pode escolher.");
+m("bac","b",117,"Bactérias probióticas são aquelas que:",["Melhoram o equilíbrio microbiano e fazem bem à saúde","Sempre causam doença","Só vivem em tecidos necróticos","Produzem toxinas letais"],"Pró-vida.");
+m("bac","b",117,"Qual destas é citada como probiótica?",["Lactobacillus bulgaricus","Yersinia pestis","Clostridium tetani","Vibrio cholerae"],"Também Bifidobacterium bifidum e Streptococcus thermophilus.");
+m("bac","b",118,"Microbiota é:",["O conjunto de microrganismos que vive nos tecidos e fluidos humanos","Um tipo de vacina","Uma doença causada por fungos","Um tipo de antibiótico"],"Composta principalmente de bactérias, mas com fungos e vírus.");
+m("bac","b",118,"Estima-se que a superfície do corpo tenha quantos kg de microrganismos?",["1 a 2 kg","10 a 20 kg","100 g","50 kg"],"De 1 a 2 kg.");
+v("bac","b",118,"Cada local do corpo tem microbioma e função específicos.",true,"Oral, intestinal, vaginal, cutânea, pulmonar.");
+pr("bac","c",119,"Ligue a microbiota à função",[["Oral","Saúde bucal, ajuda a digerir"],["Intestinal","Digestão e regulação metabólica"],["Vaginal","Regula pH e protege"],["Cutânea","Protege a pele contra patógenos"],["Pulmonar","Muco e retenção de partículas"]],"Cada lugar, uma função.");
+v("bac","b",120,"Bactérias da nossa própria microbiota podem causar doença se entrarem no tecido após uma lesão.",true,"Podem até se disseminar na corrente sanguínea.");
+m("bac","b",120,"Normalmente, as bactérias da microbiota têm a função de:",["Proteção, produção de muco e decomposição de alimentos","Destruir hemácias","Causar febre diariamente","Bloquear o oxigênio"],"Geralmente não causam doenças.");
+m("bac","b",121,"A invasão bacteriana começa com:",["A adesão à superfície celular","A divisão do DNA humano","A fagocitose","A produção de anticorpos"],"Depois vêm as alterações que permitem a entrada.");
+m("bac","b",121,"Qual destes é um local potencialmente estéril?",["Corrente sanguínea","Intestino","Pele","Boca"],"Corrente sanguínea e sistema nervoso central.");
+m("bac","b",121,"Qual destas é causa de exposição a patógenos, segundo a aula?",["Feridas cirúrgicas e dispositivos médicos","Dormir bem","Lavar as mãos","Beber água tratada"],"Também alimentos, cortes e feridas.");
+or("bac","c",122,"Coloque em ordem o caminho da infecção bacteriana",["Exposição","Adesão","Invasão","Infecção","Dano tecidual"],"Expõe, adere, invade, infecta, danifica.");
+m("bac","b",123,"A patogênese depende da interação entre:",["Virulência da bactéria e resistência do hospedeiro","Altura e peso do paciente","Vacina e antibiótico","Glicemia e pressão"],"Ataque contra defesa.");
+m("bac","b",123,"Quais sintomas podem surgir na invasão bacteriana?",["Febre alta, dor intensa, dificuldade de respirar e confusão mental","Apenas coceira leve","Apenas aumento de apetite","Nenhum, nunca há sintomas"],"Dependem do local, do órgão e do tempo de exposição.");
+m("bac","b",127,"A coloração de Gram analisa:",["A composição da parede celular","A cor do DNA","O tipo sanguíneo","A forma do núcleo"],"Classifica em Gram-positivas e Gram-negativas.");
+m("bac","b",127,"Por que diferenciar Gram-positiva de Gram-negativa?",["Para determinar o tratamento eficaz","Para saber a idade da bactéria","Para definir a dieta","Para medir o oxigênio do sangue"],"Terapia adequada para cada tipo.");
+so("bac","b",128,"Gram-positiva ou Gram-negativa?",["Gram +","Gram −"],[["Cor violeta",0],["Parede simples",0],["Rica em peptideoglicano",0],["Menos resistente a antibióticos",0],["Cor vermelha",1],["Parede complexa",1],["Menos peptideoglicano",1],["Multirresistentes",1]],"Positiva = violeta. Negativa = vermelha e mais resistente.");
+m("bac","b",128,"Qual grupo é mais resistente a antibióticos?",["Gram-negativas","Gram-positivas","Os dois são iguais","Nenhum tem resistência"],"Entre elas estão as multirresistentes.");
+m("bac","b",128,"Qual é a cor da Gram-positiva?",["Violeta","Vermelha","Verde","Azul-claro"],"Positiva = violeta.");
+v("bac","b",128,"A Gram-negativa tem parede mais complexa e menos peptideoglicano.",true,"Por isso é mais resistente.");
+v("bac","b",128,"As Gram-positivas são mais resistentes a antibióticos que as Gram-negativas.",false,"É o contrário: Gram-negativas são mais resistentes.");
+or("bac","c",129,"Etapas da coloração de Gram",["Cristal violeta","Iodo","Álcool","Safranina"],"Violeta, iodo, lava com álcool, safranina.");
+so("bac","c",130,"Gram-positiva ou negativa?",["Gram +","Gram −"],[["Staphylococcus",0],["Streptococcus",0],["Clostridium",0],["Bacillus",0],["Lactobacillus",0],["Escherichia",1],["Salmonella",1],["Neisseria",1],["Pseudomonas",1],["Klebsiella",1],["Helicobacter",1]],"Lista dos slides.");
+m("bac","b",131,"Qual destas é uma forma de bactéria?",["Vibrião","Icosaédrica","Levedura","Helicoidal"],"Cocos, bacilos, espirilos, vibriões e esporulados.");
+m("bac","c",132,"Qual destas NÃO é forma de transmissão de doença bacteriana?",["Herança dos cromossomos","Ar e gotículas","Água e alimentos contaminados","Ferimentos e cortes"],"Também contato direto, objetos e relações sexuais.");
+pr("bac","c",133,"Respiratórias: ligue a doença à bactéria",[["Tuberculose","Mycobacterium tuberculosis"],["Pneumonia","Streptococcus pneumoniae"],["Coqueluche","Bordetella pertussis"],["Difteria","Corynebacterium diphtheriae"],["Meningite","Neisseria meningitidis"]],"Bordetella = coqueluche. Coryne = difteria.");
+pr("bac","c",134,"Gastrointestinais: ligue a doença à bactéria",[["Cólera","Vibrio cholerae"],["Febre tifoide","Salmonella typhi"],["Disenteria","Shigella spp."],["Gastrite e úlcera","Helicobacter pylori"],["Botulismo","Clostridium botulinum"]],"Pylori = piloro, parte do estômago.");
+pr("bac","c",135,"Pele e tecidos: ligue a doença à bactéria",[["Hanseníase","Mycobacterium leprae"],["Erisipela","Streptococcus pyogenes"],["Celulite infecciosa","Staphylococcus aureus"],["Tétano","Clostridium tetani"]],"Lepra = leprae. Tétano = tetani.");
+pr("bac","c",136,"Sistêmicas: ligue a doença à bactéria",[["Leptospirose","Leptospira interrogans"],["Peste bubônica","Yersinia pestis"],["Antraz","Bacillus anthracis"]],"Os nomes ajudam: lepto, pestis, anthracis.");
+pr("bac","c",138,"ISTs bacterianas: ligue a doença à bactéria",[["Sífilis","Treponema pallidum"],["Gonorreia","Neisseria gonorrhoeae"],["Clamídia","Chlamydia trachomatis"]],"Gonorreia = gonorrhoeae.");
+pr("bac","c",137,"Ligue a infecção à bactéria",[["Infecção urinária","Escherichia coli"],["Intoxicação alimentar","Staphylococcus aureus"],["Listeriose","Listeria monocytogenes"]],"ITU = E. coli.");
+pr("bac","c",134,"Ligue a doença ao principal sinal",[["Tuberculose","Afeta principalmente os pulmões"],["Coqueluche","Tosse seca e crises de engasgo"],["Cólera","Diarreia intensa e desidratação"],["Disenteria","Diarreia com sangue"],["Botulismo","Fraqueza muscular e paralisia"],["Tétano","Rigidez muscular"],["Hanseníase","Lesões na pele e nervos"],["Sífilis","Feridas indolores"]],"Sinais dos quadros das p.133 a 138.");
+m("bac","c",136,"Qual doença é transmitida pela urina de animais?",["Leptospirose","Tuberculose","Coqueluche","Sífilis"],"Lepto = rato e enchente na memória.");
+m("bac","c",135,"O tétano entra no corpo principalmente por:",["Ferimentos","Tosse","Água tratada","Herança genética"],"Causa rigidez muscular.");
+m("bac","c",136,"Sepse bacteriana é:",["Infecção generalizada que pode levar à falência de órgãos","Infecção restrita à unha","Alergia alimentar","Deficiência de ferro"],"É grave e sistêmica.");
+m("bac","c",139,"Sobre antibióticos, o correto é:",["Nunca usar por conta própria: só com prescrição","Usar sempre que tiver gripe","Parar assim que melhorar","Compartilhar com a família"],"O uso correto evita resistência bacteriana.");
+m("bac","c",139,"Qual destas é uma medida de prevenção de doenças bacterianas?",["Vacinação e higiene","Compartilhar objetos pessoais","Consumir alimentos crus","Dispensar preservativos"],"Também água tratada e alimentos bem cozidos.");
+
+/* ===================== VÍRUS ===================== */
+m("vir","b",146,"A palavra vírus vem do latim e significa:",["Fluido venenoso ou toxina","Pequena câmara","Vida pequena","Pé falso"],"Vírus = veneno.");
+v("vir","b",146,"Os vírus são acelulares: não possuem célula.",true,"Por isso não são considerados seres vivos.");
+m("vir","b",146,"O vírus é um parasita:",["Intracelular obrigatório","De vida livre","Extracelular","Apenas de plantas"],"Só se multiplica dentro de uma célula.");
+m("vir","b",146,"Do que é composto um vírus?",["Capa proteica (capsídeo), ácido nucleico (DNA ou RNA) e, às vezes, envelope","Núcleo, mitocôndrias e parede de quitina","Citoplasma e ribossomos","Só de gordura"],"Lembre: capsídeo + DNA ou RNA + envelope*.");
+m("vir","b",146,"Os vírus podem ter cerca de:",["20 nanômetros","20 centímetros","2 milímetros","20 metros"],"Por isso não são vistos no microscópio comum.");
+pr("vir","b",146,"Classificação dos vírus: ligue",[["Adenovírus","Compostos de DNA"],["Retrovírus","Compostos de RNA"],["Arbovírus","Transmitidos por insetos"]],"Adeno = DNA. Retro = RNA. Arbo = artrópode.");
+v("vir","b",146,"A reprodução viral depende do tipo de vírus e da célula invadida.",true,"Por isso os ciclos variam.");
+pr("vir","b",148,"Estrutura viral: ligue à função",[["Envelope","Entrada na célula e proteção"],["Capsídeo","Proteção e forma"],["RNA/DNA","Informação genética"],["Matriz","Organização e montagem"]],"Decore essa tabelinha: costuma render questão.");
+m("vir","b",148,"Qual estrutura viral dá proteção e forma?",["Capsídeo","Matriz","Envelope","Glicoproteína"],"Capsídeo = capa.");
+m("vir","b",148,"Qual estrutura viral é responsável pela organização e montagem?",["Matriz","Capsídeo","RNA/DNA","Envelope"],"Matriz monta.");
+pr("vir","c",149,"Morfologia viral: ligue ao exemplo",[["Icosaédrico","Adenovírus"],["Helicoidal","Vírus da raiva"],["Complexo","Bacteriófago"]],"Ico = geométrico. Hélice = alongado.");
+so("vir","b",150,"Envelopado ou não envelopado?",["Envelopado","Não envelopado"],[["Menos resistente no ambiente",0],["Funde o envelope com a membrana",0],["Tem espículas para os receptores",0],["Invade a célula com facilidade",0],["Muito resistente no ambiente",1],["Sobrevive em superfícies",1],["Resiste a pH ácido",1],["Transmite com mais facilidade",1]],"Com envelope entra melhor. Sem envelope resiste melhor.");
+v("vir","b",150,"Vírus envelopados são mais resistentes no ambiente que os não envelopados.",false,"É o contrário. O envelope ajuda a entrar, mas o vírus resiste menos fora da célula.");
+v("vir","b",151,"Vírus não envelopados sobrevivem mais tempo em superfícies.",true,"Também resistem a pH ácido e variações térmicas.");
+m("vir","b",151,"Vírus não envelopados:",["Infectam com menos eficiência, mas se transmitem com mais facilidade","Infectam melhor e transmitem menos","Morrem logo em qualquer superfície","Possuem espículas no envelope"],"Essa frase é do slide. Boa pegadinha.");
+m("vir","b",150,"O que reconhece os receptores específicos da célula nos vírus envelopados?",["Espículas","Capsídeo","Citoplasma","Parede de quitina"],"São as pontinhas externas.");
+so("vir","b",152,"Adenovírus ou retrovírus?",["Adenovírus","Retrovírus"],[["DNA",0],["Incubação menor",0],["Multiplicação acelerada",0],["Patologias agudas",0],["RNA",1],["Incubação mais longa",1],["Multiplicação lenta",1],["Patologias crônicas",1]],"Adeno é rápido e agudo. Retro é lento e crônico.");
+m("vir","b",152,"O adenovírus é capaz de produzir patologias:",["Agudas","Apenas crônicas","Apenas ósseas","Hereditárias"],"Multiplicação acelerada e incubação menor.");
+m("vir","b",152,"No adenovírus, o combate depende principalmente:",["Do sistema imunológico, com alívio de sintomas","Do antibiótico","Da transcriptase reversa","De antifúngicos"],"O tratamento alivia os sintomas.");
+so("vir","b",155,"Qual grupo de vírus causa?",["Adenovírus","Retrovírus","Arbovírus"],[["Faringite",0],["Conjuntivite viral",0],["Cistite",0],["Amigdalite",0],["AIDS",1],["Dengue",2],["Zika",2],["Chikungunya",2],["Febre amarela",2]],"Arbo = mosquito. AIDS = retrovírus.");
+m("vir","c",153,"Quais sistemas os adenovírus infectam principalmente?",["Respiratório, gastrointestinal, urinário e ocular","Ósseo e muscular","Nervoso e endócrino","Reprodutor apenas"],"Por isso faringite, gastroenterite, cistite e conjuntivite.");
+m("vir","b",154,"O que os retrovírus usam para “se modificar”?",["Transcriptase reversa","Integrase apenas","Queratina","Histamina"],"É a enzima que faz RNA virar DNA.");
+m("vir","b",154,"Qual é o tratamento específico citado para retrovírus?",["Antirretroviral","Antifúngico","Antiparasitário","Vitamina B12"],"Retrovírus afeta o sistema imunológico.");
+m("vir","b",155,"Qual é a enzima dos retrovírus?",["Transcriptase reversa","Amilase","Insulina","Lactase"],"Inversa ao fluxo normal.");
+or("vir","c",156,"Coloque em ordem: o que o retrovírus faz na célula",["Libera o RNA viral no citoplasma","Transcriptase reversa copia o RNA","Forma-se o DNA viral","DNA viral entra no núcleo","Integra-se ao DNA da célula","A célula produz novos vírus"],"RNA vira DNA, que se esconde no DNA da célula.");
+m("vir","c",156,"Qual enzima ajuda o DNA viral a se integrar ao DNA da célula?",["Integrase","Transcriptase reversa","Amilase","Hemoglobina"],"Integrase integra.");
+m("vir","b",157,"Por que o retrovírus é perigoso?",["Se esconde no DNA da célula e pode ficar latente por muito tempo","Morre em poucos minutos","Não entra nas células","Só atinge plantas"],"É difícil de detectar e de eliminar.");
+m("vir","b",157,"Muitos antirretrovirais atuam:",["Inibindo a transcriptase reversa","Destruindo a parede de quitina","Aumentando as plaquetas","Bloqueando os flagelos"],"Impede que o RNA viral vire DNA.");
+v("vir","b",157,"Inibir a transcriptase reversa impede que o RNA viral vire DNA e bloqueia a multiplicação.",true,"Por isso é alvo de medicamentos.");
+so("vir","c",158,"Célula humana ou retrovírus?",["Célula humana","Retrovírus"],[["DNA → RNA",0],["Transcrição normal",0],["Produz proteínas",0],["Processo fisiológico",0],["RNA → DNA",1],["Transcrição reversa",1],["Produz novos vírus",1],["Processo infeccioso",1]],"O retrovírus faz o caminho inverso.");
+m("vir","b",160,"O arbovírus é transmitido principalmente por:",["Insetos","Água tratada","Herança genética","Antibióticos"],"Precisa de um hospedeiro, geralmente inseto.");
+m("vir","b",160,"O que significa plasticidade no arbovírus?",["Capacidade de adaptação a ambientes e hospedeiros, com alta mutação","Ter parede de plástico","Não sofrer mutação","Não precisar de hospedeiro"],"Alta mutação = adapta rápido.");
+v("vir","b",160,"O arbovírus tem período de incubação curto e pode deixar sequelas graves.",true,"Patologia aguda, mas com possíveis sequelas.");
+v("vir","b",160,"Arbovírus causam quadros agudos e nunca deixam sequelas.",false,"Podem causar sequelas graves.");
+m("vir","c",161,"Qual destas é doença causada por arbovírus?",["Febre amarela","AIDS","Faringite","Cistite"],"Dengue, zika, chikungunya e febre amarela.");
+m("vir","c",163,"Qual destas é medida de prevenção de doenças virais citada?",["Vacinação e controle de mosquitos","Antibiótico por conta própria","Evitar lavar as mãos","Compartilhar máscara"],"Também higiene, máscara, preservativo e alimentos seguros.");
+so("vir","c",164,"Qual tipo de doença viral?",["Respiratória","Neurológica","IST","Gastrointestinal"],[["COVID-19",0],["Sarampo",0],["Gripe",0],["Raiva",1],["Poliomielite",1],["HIV/AIDS",2],["HPV",2],["Rotavírus",3],["Norovírus",3]],"Quadros das p.164 a 168.");
+
+/* ===================== PROTOZOÁRIOS ===================== */
+m("pro","b",171,"Os protozoários são microrganismos:",["Mais complexos, com células organizadas","Sem célula","Sem núcleo","Sempre inofensivos"],"Podem causar doenças importantes.");
+m("pro","b",172,"Os protozoários fazem parte de qual reino?",["Protista","Monera","Fungi","Plantae"],"Reino protista.");
+pr("pro","b",172,"Protozoário: ligue a característica ao significado",[["Eucarionte","Célula completa, núcleo definido"],["Unicelular","Formado por célula única"],["Heterotrófico","Não produz o próprio alimento"]],"Euca, uni, hetero.");
+v("pro","b",172,"Protozoários são capazes de produzir o próprio alimento.",false,"São heterotróficos: não produzem.");
+v("pro","b",172,"Protozoários são eucariontes e unicelulares.",true,"Célula completa, com núcleo definido.");
+m("pro","b",172,"Onde vive a maioria dos protozoários?",["Em vida livre, em ambientes aquáticos e úmidos","Apenas no sangue humano","Apenas em desertos","Apenas no ar"],"A maior parte tem vida livre.");
+m("pro","b",172,"Como os protozoários se reproduzem?",["Assexuada (divisão binária) e sexuada","Só por brotamento","Só por transcriptase reversa","Só por esporos"],"Tem as duas formas.");
+pr("pro","c",173,"Forma de locomoção: ligue ao tipo",[["Ciliados","Cílios: Balantidium"],["Flagelados","Flagelo: giárdia e leishmania"],["Rizópodos","Pseudópodos: ameba"],["Esporozoários","Sem locomoção: Plasmodium"]],"Rizópodo = pé falso.");
+m("pro","c",173,"A ameba se locomove por meio de:",["Pseudópodos","Flagelos","Cílios","Asas"],"Falsos pés.");
+m("pro","c",173,"Os protozoários são classificados de acordo com:",["A forma de locomoção","O tipo de DNA","A cor na coloração de Gram","A presença de envelope"],"Cílio, flagelo, pseudópodo ou nenhum.");
+or("pro","c",174,"Coloque em ordem o ciclo do protozoário",["Ingestão do cisto na água ou alimento","Cisto se rompe e libera o trofozoíto","Trofozoíto se multiplica e invade tecidos","Vira cisto e sai nas fezes"],"Cisto entra, trofozoíto ataca, cisto sai.");
+m("pro","c",174,"Qual forma do protozoário se multiplica e causa sintomas?",["Trofozoíto","Cisto","Capsídeo","Micélio"],"Cisto é a forma de transmissão.");
+m("pro","b",177,"Qual destas é forma de transmissão de protozoários?",["Transmissão vertical, da mãe para o bebê","Herança dos cromossomos","Falta de vitamina","Exposição ao sol"],"Também água, alimentos, insetos, contato sexual e transfusão.");
+m("pro","b",177,"Qual destes NÃO é sintoma comum de doenças por protozoários, na aula?",["Fratura óssea","Diarreia","Febre","Perda de peso"],"Também cólicas, náuseas, vômitos, anemia e fraqueza.");
+v("pro","b",177,"Protozoários podem ser transmitidos por transfusão de sangue contaminado.",true,"E por picada de insetos, como barbeiro e mosquitos.");
+pr("pro","c",178,"Ligue a doença ao protozoário",[["Amebíase","Entamoeba histolytica"],["Giardíase","Giardia lamblia"],["Chagas","Trypanosoma cruzi"],["Leishmaniose","Leishmania spp."],["Malária","Plasmodium spp."],["Toxoplasmose","Toxoplasma gondii"],["Tricomoníase","Trichomonas vaginalis"]],"A maioria dos nomes já lembra a doença.");
+m("pro","c",179,"A doença de Chagas é transmitida por:",["Barbeiro","Anopheles","Pulga","Pombo"],"Pode afetar coração e sistema digestório.");
+m("pro","c",179,"A malária é transmitida pelo mosquito:",["Anopheles","Barbeiro","Aedes","Pulga de rato"],"Causada por Plasmodium: febre alta, calafrios, suores e anemia.");
+pr("pro","c",179,"Ligue a doença ao que ela causa",[["Chagas","Afeta coração e digestório"],["Leishmaniose","Tegumentar ou visceral"],["Amebíase","Pode dar abscesso no fígado"],["Giardíase","Má absorção de nutrientes"],["Toxoplasmose","Grave em gestantes"],["Tricomoníase","IST com corrimento e coceira"]],"Quadros das p.178 a 180.");
+m("pro","c",180,"Toxoplasmose pode ser grave em:",["Gestantes e imunodeprimidos","Apenas crianças saudáveis","Apenas atletas","Apenas idosos saudáveis"],"Causada por Toxoplasma gondii.");
+m("pro","c",180,"Qual doença por protozoário é uma infecção sexualmente transmissível?",["Tricomoníase","Malária","Giardíase","Chagas"],"Trichomonas vaginalis.");
+
+/* ===================== FUNGOS ===================== */
+v("fun","b",182,"Os fungos são eucariontes: têm célula com núcleo definido.",true,"Mais complexos que as bactérias.");
+m("fun","b",182,"A parede celular dos fungos é rica em:",["Quitina","Peptideoglicano","Queratina","Colágeno"],"Peptideoglicano é da bactéria. Quitina é do fungo.");
+m("fun","b",182,"Os fungos podem ser:",["Unicelulares ou pluricelulares","Somente unicelulares","Somente acelulares","Somente procariontes"],"Levedura é uni. Bolor e cogumelo são pluri.");
+v("fun","b",182,"Os fungos têm organização celular mais simples que a das bactérias.",false,"Têm organização mais complexa.");
+m("fun","b",183,"Fungos são heterotróficos porque:",["Não produzem seu próprio alimento","Fazem fotossíntese","Não precisam de alimento","Comem apenas luz"],"Podem ser parasitas ou sapróbicos.");
+m("fun","b",183,"Dizer que os fungos são ubíquos significa que:",["Vivem na água, no solo, em vegetais, animais, no homem e em detritos","Só vivem em lugares secos","Só vivem no intestino","Só existem em laboratório"],"Estão em todo lugar.");
+m("fun","b",183,"Fungos sapróbicos:",["Absorvem matéria orgânica","Vivem só dentro das hemácias","Produzem luz","Fazem fotossíntese"],"O outro comportamento é ser parasita.");
+so("fun","b",183,"Macroscópico ou microscópico?",["Macroscópico","Microscópico"],[["Cogumelos",0],["Leveduras",1],["Bolores",1]],"Só o cogumelo é visto a olho nu.");
+m("fun","b",183,"Quantas espécies de fungos estima-se existir?",["1,5 milhão","15 mil","150","15 bilhões"],"Mas só 97.861 estão registradas.");
+m("fun","b",184,"Qual destas é função importante dos fungos?",["Decomposição da matéria orgânica","Produção de hemácias","Transporte de oxigênio","Coagulação do sangue"],"Também alimentação e medicamentos.");
+pr("fun","c",188,"Fungos e medicamentos: ligue",[["Penicilina","Antibiótico"],["Ciclosporina","Imunossupressor"],["Lovastatina","Colesterol"]],"Três remédios vindos de fungos.");
+m("fun","b",184,"Qual antibiótico é produzido a partir de fungos?",["Penicilina","Insulina","AZT","Vacina"],"Ciclosporina (imunossupressor) também vem de fungos.");
+m("fun","b",184,"Qual destes alimentos depende de fungos?",["Queijo, vinho, cerveja e pão","Sal de cozinha","Água mineral","Açúcar refinado"],"Fermentação.");
+v("fun","c",185,"Os fungos podem viver de forma harmoniosa no corpo, mas a superpopulação causa problemas.",true,"Na pele, mucosas e em infecções cutâneas.");
+pr("fun","c",186,"Apresentação dos fungos: ligue",[["Leveduras","Unicelulares, brotamento"],["Bolores","Pluricelulares, hifas e micélios"],["Cogumelos","Pluricelulares, macroscópicos"]],"Levedura brota. Bolor faz hifas.");
+m("fun","c",186,"Candida albicans é um exemplo de:",["Levedura","Bolor","Cogumelo","Bactéria"],"Reproduz por brotamento.");
+m("fun","c",187,"O cogumelo que vemos na superfície é:",["Apenas a estrutura reprodutiva do fungo","Todo o fungo","Uma planta","Uma bactéria gigante"],"O restante fica no solo, em rede de hifas: o micélio.");
+m("fun","c",187,"Como se chama a rede de hifas do fungo?",["Micélio","Capsídeo","Citoplasma","Cisto"],"Fica escondida no solo.");
+pr("fun","c",192,"Ligue a doença ao fungo",[["Pano branco","Malassezia furfur"],["Candidíase","Candida spp."],["Esporotricose","Sporothrix schenckii"],["Criptococose","Cryptococcus neoformans"],["Aspergilose","Aspergillus spp."]],"O nome da doença lembra o nome do fungo.");
+pr("fun","c",192,"Ligue a doença ao tipo de infecção",[["Pano branco","Superficial"],["Pé de atleta","Cutânea"],["Sapinho","Mucosa"],["Esporotricose","Subcutânea"],["Criptococose","Sistêmica"]],"Da superfície para o interior do corpo.");
+m("fun","c",189,"Qual doença é conhecida como “doença do pombo”?",["Criptococose","Aspergilose","Esporotricose","Candidíase"],"Causada por Cryptococcus neoformans.");
+m("fun","c",189,"Qual doença é conhecida como “doença do gato”?",["Esporotricose","Criptococose","Candidíase","Pano branco"],"Causada por Sporothrix schenckii.");
+m("fun","c",192,"“Sapinho” é uma infecção de boca causada por:",["Candida","Aspergillus","Malassezia","Sporothrix"],"Candidíase.");
+m("fun","c",192,"A tinea (micose de pele) inclui:",["Pé de atleta","Sapinho","Doença do pombo","Malária"],"Também micose de corpo, de virilha e da cabeça.");
+m("fun","c",191,"Qual destas é forma de transmissão de fungos?",["Inalação de esporos no ar","Picada de barbeiro","Transcriptase reversa","Herança dos cromossomos"],"Também contato direto e penetração por feridas.");
+m("fun","c",191,"Qual destes é sintoma comum em infecções por fungos?",["Coceira e descamação","Rigidez muscular","Tosse com engasgo","Paralisia"],"Também vermelhidão, manchas e corrimento.");
+
+/* ===================== RECONHECER PELA IMAGEM ===================== */
+im("bac","b",131,"Qual destas é o vibrião?",["vibriao","coco","bacilo","espirilo"],"Vibrião tem formato de vírgula. Vibrio cholerae causa a cólera.");
+im("bac","b",131,"Qual destas é o bacilo?",["bacilo","coco","vibriao","espirilo"],"Bacilo tem forma de bastão.");
+im("bac","b",131,"Qual destas é o espirilo?",["espirilo","vibriao","bacilo","coco"],"Espirilo = espiral.");
+im("bac","b",131,"Qual destas mostra cocos?",["coco","bacilo","espirilo","vibriao"],"Cocos são arredondados.");
+im("bac","c",113,"Qual imagem mostra estafilococos?",["estafilo","estrepto","bacilo","vibriao"],"Estafilo = cacho.");
+im("bac","c",113,"Qual imagem mostra estreptococos?",["estrepto","estafilo","coco","espirilo"],"Estrepto = fileira, como um colar.");
+im("bac","b",128,"Qual imagem mostra a bactéria Gram-positiva?",["grampos","gramneg"],"Positiva = violeta, com parede rica em peptideoglicano.");
+im("bac","b",128,"Qual imagem mostra a bactéria Gram-negativa?",["gramneg","grampos"],"Negativa = vermelha, com parede complexa.");
+im("bac","b",115,"Qual tubo mostra uma bactéria aeróbia?",["aerobia","anaerobia","facultativa"],"Precisa de oxigênio, então cresce no alto do tubo.");
+im("bac","b",115,"Qual tubo mostra uma bactéria anaeróbia?",["anaerobia","aerobia","facultativa"],"Foge do oxigênio, então cresce no fundo.");
+im("bac","b",115,"Qual tubo mostra uma bactéria facultativa?",["facultativa","aerobia","anaerobia"],"Tanto faz: cresce no tubo todo.");
+im("san","b",70,"Qual é a hemácia da anemia falciforme?",["falciforme","hemacia","ferropriva","megaloblastica"],"Forma de meia lua, por mutação genética.");
+im("san","b",70,"Qual imagem representa a anemia ferropriva?",["ferropriva","megaloblastica","falciforme","hemacia"],"Falta de ferro: hemácias pequenas e descoradas.");
+im("san","b",70,"Qual imagem representa a anemia megaloblástica?",["megaloblastica","ferropriva","falciforme","hemacia"],"Falta de B12: hemácias grandes e imaturas.");
+im("san","b",71,"Qual destas é a plaqueta?",["plaqueta","hemacia","neutrofilo","linfB"],"É um fragmento celular, irregular e pequeno.");
+im("san","b",75,"Qual célula “come” os invasores?",["macrofago","hemacia","plaqueta","eosinofilo"],"Macrófago faz fagocitose.");
+im("san","b",76,"Qual célula dispara anticorpos?",["linfB","linfT","hemacia","basofilo"],"Linfócito B produz anticorpos.");
+im("san","b",76,"Qual é o comandante da resposta imune?",["linfT","linfB","nk","monocito"],"Linfócito T coordena a resposta.");
+im("san","c",84,"Qual é o neutrófilo, com núcleo em vários lobos?",["neutrofilo","monocito","eosinofilo","linfB"],"Vários lobos no núcleo: neutrófilo.");
+im("san","c",84,"Qual é o basófilo, cheio de grãos escuros?",["basofilo","eosinofilo","neutrofilo","monocito"],"Grãos escuros: basófilo, ligado à histamina.");
+im("san","c",84,"Qual é o eosinófilo, com grãos alaranjados?",["eosinofilo","basofilo","neutrofilo","monocito"],"Grãos alaranjados e núcleo em dois lobos.");
+im("san","c",84,"Qual é o monócito, com núcleo em forma de rim?",["monocito","neutrofilo","basofilo","eosinofilo"],"Núcleo em forma de rim. Dá origem aos macrófagos.");
+im("cel","c",29,"Qual destas é a célula especializada do cérebro?",["neuronio","hemacia","mitocondria"],"Neurônio: recebe, processa e transmite impulsos nervosos.");
+im("imu","c",88,"Qual destas é o anticorpo?",["anticorpo","plaqueta","virusn","hemacia"],"Formato de Y.");
+im("vir","b",150,"Qual imagem mostra um vírus envelopado?",["viruse","virusn","fago"],"Tem envelope e espículas.");
+im("vir","b",151,"Qual imagem mostra um vírus não envelopado?",["virusn","viruse","retro"],"Sem envelope: mais resistente no ambiente.");
+im("vir","c",149,"Qual é o formato helicoidal, como o vírus da raiva?",["helicoidal","virusn","fago","viruse"],"Formato alongado.");
+im("vir","c",149,"Qual é o vírus de formato complexo, o bacteriófago?",["fago","helicoidal","virusn","viruse"],"Cabeça, cauda e “pernas”.");
+im("vir","b",154,"Qual imagem representa o retrovírus?",["retro","virusn","helicoidal","fago"],"RNA vira DNA: caminho inverso.");
+im("pro","c",173,"Qual protozoário se locomove com pseudópodos?",["ameba","flagelado","ciliado","esporozoario"],"Ameba: “pés falsos”.");
+im("pro","c",173,"Qual protozoário se locomove com flagelo?",["flagelado","ameba","ciliado","esporozoario"],"Flagelado: um longo “chicote”.");
+im("pro","c",173,"Qual protozoário se locomove com cílios?",["ciliado","flagelado","ameba","esporozoario"],"Ciliado: pelinhos em volta.");
+im("pro","c",179,"Qual inseto transmite a doença de Chagas?",["barbeiro","mosquito"],"Barbeiro.");
+im("fun","c",186,"Qual fungo se reproduz por brotamento?",["levedura","bolor","cogumelo"],"Levedura solta um broto.");
+im("fun","c",186,"Qual fungo forma hifas e micélios?",["bolor","levedura","cogumelo"],"Bolor.");
+im("fun","c",186,"Qual destes é o fungo macroscópico?",["cogumelo","levedura","bolor"],"O cogumelo se vê a olho nu.");
+im("gen","c",54,"Qual imagem representa o DNA?",["dna","rna","proteina"],"Fita dupla.");
+im("gen","c",55,"Qual imagem representa o RNA?",["rna","dna","proteina"],"Fita simples, o mensageiro.");
+im("cel","c",26,"Qual organela produz energia?",["mitocondria","neuronio","eucarionte"],"Mitocôndria: faz o ATP.");
+
+/* ===================== TOCAR NA ESTRUTURA ===================== */
+di("vir","b",148,"Toque no capsídeo","virus","capsideo","Capsídeo: proteção e forma.","viruse");
+di("vir","b",148,"Toque no envelope","virus","envelope","Envelope: entrada na célula e proteção.","viruse");
+di("vir","b",148,"Toque na matriz viral","virus","matriz","Matriz: organização e montagem.","viruse");
+di("vir","b",148,"Onde fica a informação genética (DNA ou RNA)?","virus","genoma","RNA/DNA: informação genética.","viruse");
+di("vir","c",147,"Toque nas glicoproteínas","virus","glico","As espículas reconhecem os receptores da célula.","viruse");
+di("bac","c",22,"Toque na cápsula, o escudo protetor","bacteria","capsula","Cápsula: escudo protetor.","procarionte");
+di("bac","c",22,"Toque na parede celular","bacteria","parede","Parede celular: rígida, dá forma e protege.","procarionte");
+di("bac","c",22,"Toque na membrana plasmática","bacteria","membrana","Membrana: controla entrada e saída.","procarionte");
+di("bac","c",22,"Toque no nucleoide","bacteria","nucleoide","Nucleoide: DNA sem núcleo formado.","procarionte");
+di("bac","c",22,"Toque nos ribossomos","bacteria","ribossomos","Ribossomos produzem proteínas.","procarionte");
+di("bac","c",22,"Toque no flagelo","bacteria","flagelo","Flagelo permite a locomoção.","procarionte");
+di("bac","c",22,"Toque nas fímbrias","bacteria","fimbrias","Fímbrias ajudam a aderir, como ganchos.","procarionte");
+di("cel","b",25,"Toque no núcleo","celula","nucleo","O núcleo guarda o DNA e comanda a célula.","eucarionte");
+di("cel","b",25,"Toque no citoplasma","celula","citoplasma","Região entre a membrana e o núcleo.","eucarionte");
+di("cel","b",25,"Toque na membrana plasmática","celula","membrana","Controla a entrada e a saída de substâncias.","eucarionte");
+di("cel","c",26,"Toque na mitocôndria","celula","mitocondria","Produz energia (ATP).","mitocondria");
+di("cel","c",26,"Toque no complexo de Golgi","celula","golgi","Modifica, empacota e secreta substâncias.","eucarionte");
+di("cel","c",26,"Toque no lisossomo","celula","lisossomo","Faz a digestão celular.","eucarionte");
+di("cel","c",26,"Toque no retículo rugoso (RER)","celula","rer","Tem ribossomos: síntese de proteínas.","eucarionte");
+di("cel","c",26,"Toque no retículo liso (REL)","celula","rel","Produz lipídios e desintoxica.","eucarionte");
+
+/* ===================== SESSÃO FINAL: REVISAR COM A PROFESSORA ===================== */
+const REVISAO = [
+  { id:"rev-155", pag:155, bomba:true, pergunta:"Herpes e hepatites são causados por retrovírus?",
+    slide:"Lista AIDS, herpes e hepatites como doenças causadas por retrovírus (RNA).",
+    conferencia:"Retrovírus clássico é o HIV. Herpes é vírus de DNA, e o vírus da hepatite B também tem DNA, de outra família, embora use transcrição reversa.",
+    indicacao:"A p.146 diz que retrovírus é composto de RNA, e a p.149 mostra herpes e hepatite B como vírus separados. Pergunte como ela quer esta resposta na prova." },
+  { id:"rev-70", pag:70, bomba:true, pergunta:"O que é anemia hemolítica?",
+    slide:"Anemia hemolítica = grandes perdas sanguíneas.",
+    conferencia:"Hemolítica é a destruição das hemácias. Perda de sangue é anemia hemorrágica.",
+    indicacao:"Nenhum outro slide explica o termo. Pergunte qual definição vale para a prova." },
+  { id:"rev-154", pag:154, bomba:true, pergunta:"Quanto dura a janela imunológica do retrovírus (HIV)?",
+    slide:"Período de incubação mais longo (janela imunológica de 6 meses a 1 ano).",
+    conferencia:"O Ministério da Saúde indica cerca de 30 a 60 dias para anticorpos detectáveis, variando conforme o teste. Janela e incubação também são conceitos diferentes.",
+    indicacao:"A ideia de incubação longa é segura. Pergunte se o número 6 meses a 1 ano será cobrado." },
+  { id:"rev-117", pag:117, bomba:true, pergunta:"Arqueobactérias e cianobactérias são probióticas?",
+    slide:"Depois de Lactobacillus, Bifidobacterium e Streptococcus thermophilus, cita arqueobactérias, actinobactérias e cianobactérias.",
+    conferencia:"Os três primeiros são exemplos clássicos de probióticos. Os outros grupos não costumam ser classificados como probióticos.",
+    indicacao:"Estude pelos três primeiros e confirme se a lista ampliada é cobrada." },
+  { id:"rev-83", pag:83, bomba:false, pergunta:"Quem produz anticorpos: todos os leucócitos?",
+    slide:"Leucócitos: “produtor de anticorpos. Neutrófilos, eosinófilos, basófilos, fagócitos, monócitos.”",
+    conferencia:"As p.76 e 87 da própria aula dizem que quem produz anticorpos são os linfócitos (B). Linfócitos também são glóbulos brancos.",
+    indicacao:"Use linfócito B na resposta, salvo orientação diferente da professora." },
+  { id:"rev-30", pag:30, bomba:false, pergunta:"A célula β do pâncreas produz insulina e glucagon?",
+    slide:"Célula β pancreática: produção de insulina e glucagon.",
+    conferencia:"A célula β produz insulina. O glucagon vem da célula α.",
+    indicacao:"Tema de contexto, sem bomba direta. Confirme se cai." },
+  { id:"rev-26", pag:26, bomba:false, pergunta:"Ribossomo é organela membranosa?",
+    slide:"Inclui ribossomos na lista de “organelas membranosas”.",
+    conferencia:"Ribossomos não têm membrana. Tanto que aparecem também na bactéria (p.22), que não tem organelas membranosas.",
+    indicacao:"A função, produzir proteínas, está certa. O problema é só a classificação." },
+  { id:"rev-189", pag:189, bomba:false, pergunta:"Psoríase é causada por fungo?",
+    slide:"Coloca psoríase na lista de doenças por fungos.",
+    conferencia:"Psoríase é doença autoimune, como diz a aula de Tegumentar (p.49). Ela nem aparece na tabela de fungos da p.192.",
+    indicacao:"Página sem bomba. Se cair, confirme com a professora." },
+  { id:"rev-130", pag:130, bomba:false, pergunta:"Mycoplasma é Gram-positivo?",
+    slide:"Inclui Mycoplasma entre as bactérias Gram-positivas.",
+    conferencia:"Mycoplasma não tem parede celular e por isso não se cora de forma típica pelo Gram.",
+    indicacao:"Página sem bomba, risco baixo. Foi deixada fora do jogo." },
+];
+if (typeof module !== "undefined") module.exports = { SETORES, Q, REVISAO };
+
+// Personagens desenhados em SVG. A forma de cada um carrega o fato a memorizar.
+const INK = "#2a1738";
+const TR = `stroke="${INK}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+const TF = `stroke="${INK}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"`;
+const olho = (x, y, r = 5) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${TF}/><circle cx="${x + 1}" cy="${y + 1}" r="${r * 0.5}" fill="${INK}"/>`;
+const rosto = (x, y, d = 9, r = 5) => olho(x - d, y, r) + olho(x + d, y, r) + `<path d="M${x - 5} ${y + 9} q5 5 10 0" fill="none" ${TF}/>`;
+const bravo = (x, y, d = 9, r = 5) => olho(x - d, y, r) + olho(x + d, y, r) + `<path d="M${x - d - 6} ${y - 8} l10 4 M${x + d + 6} ${y - 8} l-10 4" fill="none" ${TF}/><path d="M${x - 5} ${y + 11} q5 -5 10 0" fill="none" ${TF}/>`;
+const circ = (x, y, r, f, t = TR) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" ${t}/>`;
+const pontos = (l, r, f) => l.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}"/>`).join("");
+const yMini = (x, y, rot, c = "#2b6cf6") => `<g transform="translate(${x} ${y}) rotate(${rot})" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round"><path d="M0 8V0M0 0L-6 -8M0 0L6 -8"/></g>`;
+
+const BOMBA = `<path d="M62 24 q8 -14 20 -10" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/><rect x="50" y="20" width="16" height="12" rx="3" transform="rotate(30 58 26)" fill="#5b3f73" ${TR}/>${circ(46, 58, 32, "#7a2d6b")}<circle cx="35" cy="46" r="8" fill="#fff" opacity=".45"/>`;
+
+const F = {
+  // ---------- CÉLULA ----------
+  eucarionte: ["Célula eucarionte", "cel", "Tem núcleo verdadeiro, com o DNA em cromossomos, e organelas definidas.", 25,
+    `${circ(50, 50, 42, "#ffe2b8")}${circ(52, 50, 17, "#8e5bd6")}<circle cx="47" cy="45" r="4" fill="#fff" opacity=".5"/><ellipse cx="24" cy="36" rx="11" ry="6" fill="#f46d6d" ${TF} transform="rotate(-25 24 36)"/><ellipse cx="76" cy="70" rx="11" ry="6" fill="#f46d6d" ${TF} transform="rotate(30 76 70)"/><circle cx="26" cy="68" r="5" fill="#4cc38a" ${TF}/><circle cx="76" cy="30" r="4" fill="#4cc38a" ${TF}/>`],
+  procarionte: ["Célula procarionte", "cel", "A bactéria: DNA sem núcleo formado (nucleoide), mais simples e menor.", 22,
+    `<path d="M74 50 q12 -14 22 -2" fill="none" ${TR}/><rect x="8" y="26" width="72" height="48" rx="24" fill="#8ad36b" ${TR}/><path d="M26 54 q8 -14 16 0 t16 0" fill="none" stroke="#3f7d2c" stroke-width="3"/>${rosto(40, 40, 8)}`],
+  mitocondria: ["Mitocôndria", "cel", "Produz energia: o ATP, a “moeda energética” da célula.", 26,
+    `<ellipse cx="50" cy="50" rx="42" ry="28" fill="#f46d6d" ${TR}/><path d="M22 50 q5 -18 10 0 t10 0 t10 0 t10 0 t10 0" fill="none" stroke="#fff" stroke-width="3"/>${rosto(50, 34, 10, 4)}`],
+  neuronio: ["Neurônio", "cel", "Célula especializada do cérebro: recebe, processa e transmite impulsos nervosos.", 29,
+    `<path d="M50 50 L15 20 M50 50 L10 55 M50 50 L25 86 M50 50 L58 12 M50 50 L92 80 M92 80 l6 -8 M92 80 l-2 10" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M50 50 L15 20 M50 50 L10 55 M50 50 L25 86 M50 50 L58 12 M50 50 L92 80" fill="none" stroke="#ffcf5c" stroke-width="3" stroke-linecap="round"/>${circ(50, 50, 20, "#ffcf5c")}${rosto(50, 47, 7, 4)}`],
+
+  // ---------- DNA E PROTEÍNAS ----------
+  dna: ["DNA", "gen", "Fita dupla que guarda a informação. Vive no núcleo e não sai de lá.", 54,
+    `<g transform="rotate(20 50 50)"><path d="M34 6 C70 22 70 34 34 50 C-2 66 -2 78 34 94" transform="translate(16 0)" fill="none" stroke="#8e5bd6" stroke-width="7" stroke-linecap="round"/><path d="M66 6 C30 22 30 34 66 50 C102 66 102 78 66 94" transform="translate(-16 0)" fill="none" stroke="#f2709c" stroke-width="7" stroke-linecap="round"/><path d="M32 14H68M38 26H62M38 74H62M32 86H68" stroke="${INK}" stroke-width="3"/></g>`],
+  rna: ["RNA", "gen", "Fita simples mensageira: leva a informação do núcleo até os ribossomos.", 55,
+    `<path d="M14 80 C30 40 40 96 54 54 S80 40 88 16" fill="none" stroke="#f2709c" stroke-width="8" stroke-linecap="round"/><path d="M26 58l-8 -6M46 66l-10 -6M58 44l-9 -6M76 32l-9 -6" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><path d="M70 74h22v14H70z" fill="#fff" ${TF}/><path d="M70 74l11 8 11 -8" fill="none" ${TF}/>`],
+  proteina: ["Proteína", "gen", "Executa a função: enzimas, estrutura, transporte, defesa, hormônios, movimento.", 58,
+    `<path d="M16 66 C8 40 34 24 44 42 C54 60 24 62 36 80 C48 96 76 86 66 62 C58 44 44 26 62 16 C78 8 96 30 84 46" fill="none" stroke="${INK}" stroke-width="14" stroke-linecap="round"/><path d="M16 66 C8 40 34 24 44 42 C54 60 24 62 36 80 C48 96 76 86 66 62 C58 44 44 26 62 16 C78 8 96 30 84 46" fill="none" stroke="#ffb340" stroke-width="8" stroke-linecap="round"/>`],
+
+  // ---------- SANGUE ----------
+  hemacia: ["Hemácia", "san", "Glóbulo vermelho, sem núcleo para carregar mais hemoglobina. Transporta O₂ e CO₂.", 69,
+    `${circ(50, 50, 40, "#e5383b")}<ellipse cx="50" cy="56" rx="20" ry="17" fill="#b81f2b"/>${rosto(50, 36, 12, 6)}`],
+  falciforme: ["Hemácia falciforme", "san", "Mutação genética deixa a hemácia em forma de meia lua. Ela pode obstruir o fluxo.", 70,
+    `<path d="M14 24 C34 52 66 52 88 22 C96 62 60 92 28 82 C14 74 8 50 14 24Z" fill="#e5383b" ${TR}/>${olho(40, 66, 5)}${olho(58, 66, 5)}<path d="M44 76 q5 -4 10 0" fill="none" ${TF}/>`],
+  ferropriva: ["Anemia ferropriva", "san", "Falta de ferro: hemácias pequenas e descoradas.", 70,
+    `${circ(50, 50, 22, "#f7b5b5")}<circle cx="50" cy="55" r="10" fill="#fbdede"/>${rosto(50, 44, 7, 3.5)}<path d="M80 18l-4 8h6l-4 8" fill="none" stroke="#9aa0ae" stroke-width="3"/><text x="10" y="26" font-size="13" font-weight="800" fill="#9aa0ae">Fe?</text>`],
+  megaloblastica: ["Anemia megaloblástica", "san", "Falta de vitamina B12: hemácias grandes e imaturas, que morrem antes de amadurecer.", 70,
+    `${circ(50, 52, 44, "#d62839")}<circle cx="58" cy="66" r="13" fill="#7c1320"/>${rosto(46, 36, 13, 6)}<text x="72" y="16" font-size="14" font-weight="800" fill="${INK}">B12?</text>`],
+  plaqueta: ["Plaqueta", "san", "Fragmento celular da medula que forma o coágulo. Circula de 7 a 10 dias.", 71,
+    `<path d="M50 14 l12 14 18 -4 -2 18 14 12 -16 8 0 18 -18 -6 -14 12 -6 -16 -18 -4 8 -16 -10 -14 18 -4z" fill="#b48cf2" ${TR}/>${rosto(50, 46, 9, 5)}`],
+  neutrofilo: ["Neutrófilo", "san", "Primeira linha de defesa, principalmente contra bactérias. Núcleo em vários lobos.", 75,
+    `${circ(50, 50, 42, "#f8e7ff")}${pontos([[24, 64], [34, 76], [68, 78], [78, 60], [50, 84]], 2.5, "#d3b5e8")}<path d="M28 58 a11 11 0 1 1 18 8 a11 11 0 1 1 16 0 a11 11 0 1 1 8 -14" fill="#7d4bc2" ${TF}/><g>${rosto(50, 26, 10, 5)}</g>`],
+  monocito: ["Monócito", "san", "Glóbulo branco com núcleo em forma de rim. Dá origem aos macrófagos.", 75,
+    `${circ(50, 50, 42, "#dcecff")}<path d="M24 58 C24 42 44 42 50 50 C58 42 78 44 76 60 C74 78 26 78 24 58Z" fill="#4667c9" ${TF}/>${rosto(50, 28, 10, 5)}`],
+  macrofago: ["Macrófago", "san", "O “comilão”: faz a fagocitose de invasores e restos de células e inicia a resposta imune.", 75,
+    `<path d="M12 44 C4 22 30 6 48 16 C66 4 92 18 88 38 L52 52 L92 62 C94 82 70 96 50 88 C30 98 2 78 14 58 C6 54 8 48 12 44Z" fill="#ffc9a3" ${TR}/>${olho(34, 32, 6)}${olho(54, 28, 6)}<rect x="70" y="44" width="24" height="13" rx="6" fill="#8ad36b" ${TF}/>`],
+  eosinofilo: ["Eosinófilo", "san", "Combate parasitas e age em alergias. Núcleo em dois lobos e grãos alaranjados.", 75,
+    `${circ(50, 50, 42, "#ffe9dc")}${pontos([[22, 50], [30, 66], [44, 80], [62, 80], [76, 66], [80, 48], [34, 38], [68, 38], [50, 72], [20, 62], [72, 74]], 4, "#f4733b")}<circle cx="38" cy="54" r="11" fill="#7d4bc2" ${TF}/><circle cx="62" cy="54" r="11" fill="#7d4bc2" ${TF}/><path d="M46 54h8" stroke="#7d4bc2" stroke-width="5"/>${rosto(50, 24, 10, 5)}`],
+  basofilo: ["Basófilo", "san", "Envolvido em alergias: libera histamina. Cheio de grãos escuros.", 75,
+    `${circ(50, 50, 42, "#e8defa")}${pontos([[24, 46], [20, 60], [30, 72], [42, 62], [56, 56], [68, 64], [78, 52], [72, 76], [52, 80], [38, 82], [60, 72], [32, 52], [48, 72], [80, 66]], 5, "#3d1f82")}${rosto(50, 28, 10, 5)}`],
+  linfT: ["Linfócito T", "san", "O comandante: coordena a resposta imune e destrói células infectadas ou tumorais.", 76,
+    `${circ(50, 54, 40, "#c8f0e0")}${circ(50, 60, 26, "#1f8a70")}${rosto(50, 54, 10, 5)}<path d="M20 26 C30 10 70 10 80 26 L92 32 H8Z" fill="#2a4a9f" ${TR}/><text x="50" y="27" text-anchor="middle" font-size="13" font-weight="800" fill="#ffcf5c">T</text>`],
+  linfB: ["Linfócito B", "san", "O atirador: produz anticorpos específicos contra os antígenos.", 76,
+    `${circ(42, 54, 36, "#cfe3ff")}${circ(42, 58, 23, "#2b6cf6")}${rosto(42, 52, 9, 5)}${yMini(82, 30, 55)}${yMini(88, 56, 90)}${yMini(80, 82, 125)}`],
+  nk: ["Célula NK", "san", "Natural Killer: resposta rápida e inespecífica contra infecções e tumores.", 76,
+    `<path d="M50 6 L62 28 L88 20 L76 44 L96 58 L72 66 L72 92 L50 76 L28 92 L28 66 L4 58 L24 44 L12 20 L38 28Z" fill="#ff8fa3" ${TR}/>${circ(50, 52, 20, "#b3123f")}${bravo(50, 48, 8, 4)}`],
+  tronco: ["Célula-tronco hematopoética", "san", "Fica na medula e se transforma em todos os tipos de células do sangue.", 67,
+    `${circ(50, 34, 24, "#ffd166")}${rosto(50, 30, 8, 4)}<path d="M36 58 L20 72 M50 60 V74 M64 58 L80 72" ${TR}/>${circ(16, 84, 11, "#e5383b")}${circ(50, 86, 11, "#f8e7ff")}<path d="M76 76 l6 4 5 -3 1 8 5 5 -7 3 -1 7 -6 -5 -7 1 1 -7 -5 -5 7 -2z" fill="#b48cf2" ${TF}/>`],
+  medula: ["Medula óssea", "san", "Principal local do sistema hematopoiético: produz, amadurece e renova as células do sangue.", 63,
+    `<path d="M20 12 a13 13 0 0 1 16 18 L70 64 a13 13 0 1 1 8 18 a13 13 0 1 1 -18 -8 L26 40 a13 13 0 1 1 -6 -28z" fill="#fff4dc" ${TR}/><path d="M34 38 L64 68" stroke="#e5383b" stroke-width="10" stroke-linecap="round"/>`],
+
+  // ---------- IMUNIDADE ----------
+  anticorpo: ["Anticorpo", "imu", "Proteína em forma de Y, também chamada de imunoglobulina. Produzida por linfócitos.", 87,
+    `<g stroke="${INK}" stroke-width="3" stroke-linejoin="round"><rect x="43" y="46" width="14" height="46" rx="6" fill="#e5383b"/><rect x="20" y="4" width="14" height="50" rx="6" fill="#ffb340" transform="rotate(-32 27 29) translate(8 8)"/><rect x="66" y="4" width="14" height="50" rx="6" fill="#ffb340" transform="rotate(32 73 29) translate(-8 8)"/></g>`],
+  chave: ["Chave-fechadura", "imu", "Cada anticorpo se liga a um único antígeno, como uma chave na sua fechadura.", 87,
+    `<path d="M50 8 C74 8 92 24 92 46 H64 L58 36 H42 L36 46 H8 C8 24 26 8 50 8Z" fill="#8ad36b" ${TR}/>${bravo(50, 24, 12, 4)}<path d="M42 40 V58 L50 66 L58 58 V40 M50 66 V92" fill="none" stroke="${INK}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 40 V58 L50 66 L58 58 V40 M50 66 V92" fill="none" stroke="#ffb340" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`],
+  escudo: ["Imunidade inata", "imu", "Congênita, é a primeira linha. Barreiras físicas (pele), químicas (suor) e biológicas (células).", 85,
+    `<path d="M50 6 L88 20 V50 C88 74 68 88 50 95 C32 88 12 74 12 50 V20Z" fill="#6fb6ff" ${TR}/>${rosto(50, 42, 12, 6)}`],
+  vacina: ["Vacina", "imu", "Ligada à imunidade adaptativa: adquirida ao longo da vida, cria memória imunológica.", 86,
+    `<g transform="rotate(45 50 50)"><rect x="38" y="20" width="24" height="46" rx="3" fill="#dff3ff" ${TR}/><rect x="42" y="40" width="16" height="24" fill="#4cc38a"/><path d="M50 66 V94 M36 20 H64 M50 20 V4 M40 4 H60" fill="none" ${TR}/></g>`],
+  sepse: ["Sepse", "imu", "Emergência! Febre persistente, queda de pressão, taquicardia e confusão mental.", 91,
+    `<path d="M42 62 V18 a10 10 0 0 1 20 0 V62 a18 18 0 1 1 -20 0z" fill="#fff" ${TR}/><path d="M52 24 V72" stroke="#e5383b" stroke-width="7" stroke-linecap="round"/>${circ(52, 76, 11, "#e5383b", TF)}<path d="M18 22 L8 42 H28Z" fill="#ffcf5c" ${TF}/><text x="18" y="39" text-anchor="middle" font-size="14" font-weight="800" fill="${INK}">!</text>`],
+
+  // ---------- BACTÉRIAS ----------
+  coco: ["Cocos", "bac", "Bactérias arredondadas.", 113,
+    `${circ(30, 62, 22, "#a06ee8")}${circ(70, 60, 22, "#a06ee8")}${circ(50, 30, 22, "#a06ee8")}${rosto(50, 28, 7, 4)}`],
+  estafilo: ["Estafilococos", "bac", "Cocos agrupados em forma de cacho.", 113,
+    pontos([], 0, "") + [[28, 34], [50, 26], [72, 34], [18, 56], [40, 50], [62, 50], [84, 56], [32, 72], [54, 72], [74, 74], [50, 90]].map(([x, y]) => circ(x, y, 12, "#f2b84b", TF)).join("")],
+  estrepto: ["Estreptococos", "bac", "Cocos em fileira, como um colar.", 113,
+    [[12, 66], [28, 54], [44, 58], [60, 48], [76, 38], [90, 24]].map(([x, y]) => circ(x, y, 10, "#6fb6ff", TF)).join("")],
+  bacilo: ["Bacilos", "bac", "Bactérias em forma de bastão. Ex.: Mycobacterium tuberculosis, causador da tuberculose.", 113,
+    `<rect x="6" y="28" width="88" height="44" rx="22" fill="#8ad36b" ${TR}/>${rosto(50, 46, 12, 6)}`],
+  vibriao: ["Vibriões", "bac", "Bactéria em forma de vírgula. Ex.: Vibrio cholerae, causador da cólera.", 113,
+    `<path d="M24 14 C70 8 92 44 78 80 C72 92 58 88 60 76 C64 54 44 36 22 34 C10 32 10 16 24 14Z" fill="#f2709c" ${TR}/>${olho(50, 32, 5)}${olho(66, 44, 5)}`],
+  espirilo: ["Espirilos", "bac", "Bactérias em forma de espiral.", 113,
+    `<path d="M8 54 C18 20 30 20 38 50 S58 82 66 50 S84 22 94 42" fill="none" stroke="${INK}" stroke-width="15" stroke-linecap="round"/><path d="M8 54 C18 20 30 20 38 50 S58 82 66 50 S84 22 94 42" fill="none" stroke="#ffb340" stroke-width="9" stroke-linecap="round"/>`],
+  grampos: ["Gram-positiva", "bac", "Cor violeta. Parede mais simples e rica em peptideoglicano. Menos resistente a antibióticos.", 128,
+    `<rect x="6" y="20" width="88" height="60" rx="30" fill="#6a2fc2" ${TR}/><rect x="20" y="33" width="60" height="34" rx="17" fill="#d9c4ff" ${TF}/>${rosto(50, 46, 10, 5)}`],
+  gramneg: ["Gram-negativa", "bac", "Cor vermelha. Parede complexa e menos peptideoglicano. Mais resistente: inclui as multirresistentes.", 128,
+    `<rect x="6" y="20" width="88" height="60" rx="30" fill="#ffc2cc" ${TR}/><rect x="13" y="27" width="74" height="46" rx="23" fill="#e8384f" ${TF}/><rect x="19" y="33" width="62" height="34" rx="17" fill="#ffdfe4" ${TF}/>${bravo(50, 48, 10, 5)}`],
+  aerobia: ["Bactéria aeróbia", "bac", "Precisa de oxigênio: cresce perto da superfície.", 115, tubo([[38, 22], [50, 18], [62, 24], [44, 30], [56, 32], [50, 26]])],
+  anaerobia: ["Bactéria anaeróbia", "bac", "O oxigênio pode ser letal. Vive em solos profundos e tecidos necróticos.", 115, tubo([[42, 78], [52, 84], [60, 76], [46, 70], [56, 66], [50, 74]])],
+  facultativa: ["Bactéria facultativa", "bac", "Vive e cresce com ou sem oxigênio: espalhada pelo tubo.", 115, tubo([[42, 22], [58, 28], [50, 38], [40, 48], [60, 52], [48, 62], [58, 72], [44, 80], [54, 84]])],
+  lactobacilo: ["Probiótica", "bac", "Melhora o equilíbrio microbiano e faz bem à saúde. Ex.: Lactobacillus bulgaricus.", 117,
+    `<rect x="10" y="38" width="80" height="38" rx="19" fill="#7fe0b0" ${TR}/>${rosto(50, 54, 12, 5)}<path d="M50 30 C42 16 26 26 36 12 M50 30 C58 16 74 26 64 12" fill="none"/><path d="M50 32 C38 22 40 8 50 16 C60 8 62 22 50 32Z" fill="#f2709c" ${TF}/>`],
+  divisao: ["Divisão binária", "bac", "Reprodução assexuada (cissiparidade): uma bactéria se divide em duas.", 114,
+    `<path d="M8 50 C8 26 34 22 50 40 C66 22 92 26 92 50 C92 74 66 78 50 60 C34 78 8 74 8 50Z" fill="#8ad36b" ${TR}/><path d="M50 40V60" ${TF} stroke-dasharray="4 4"/>${olho(22, 46, 4)}${olho(36, 46, 4)}${olho(64, 46, 4)}${olho(78, 46, 4)}`],
+
+  // ---------- VÍRUS ----------
+  viruse: ["Vírus envelopado", "vir", "Entra melhor na célula, mas resiste menos no ambiente. Espículas reconhecem receptores.", 150,
+    `${[0, 45, 90, 135, 180, 225, 270, 315].map((a) => `<g transform="rotate(${a} 50 50)"><path d="M50 16 V4" ${TR}/><circle cx="50" cy="5" r="4.5" fill="#ff6fb1" ${TF}/></g>`).join("")}${circ(50, 50, 34, "#ffd3e8")}${circ(50, 50, 25, "#c0398e")}${bravo(50, 48, 9, 5)}`],
+  virusn: ["Vírus não envelopado", "vir", "Sem envelope: muito resistente no ambiente e em superfícies. Formato icosaédrico, como o adenovírus.", 151,
+    `<path d="M50 6 L88 28 V72 L50 94 L12 72 V28Z" fill="#6fd0c3" ${TR}/><path d="M50 6 V30 M88 28 L68 42 M12 28 L32 42 M50 94 V74 M12 72 L32 62 M88 72 L68 62 M32 42 H68 V62 H32Z" fill="none" stroke="#1d7f73" stroke-width="2"/>${bravo(50, 50, 9, 5)}`],
+  helicoidal: ["Vírus helicoidal", "vir", "Formato alongado. Ex.: vírus da raiva.", 149,
+    `<path d="M26 92 V38 C26 4 74 4 74 38 V92Z" fill="#55b2ff" ${TR}/><path d="M26 44 q24 14 48 0 M26 60 q24 14 48 0 M26 76 q24 14 48 0" fill="none" stroke="#1f5fa8" stroke-width="3"/>${bravo(50, 30, 9, 4)}`],
+  fago: ["Bacteriófago", "vir", "Vírus de formato complexo: cabeça, cauda e “pernas”.", 149,
+    `<path d="M50 4 L72 16 V38 L50 50 L28 38 V16Z" fill="#ff9d5c" ${TR}/>${bravo(50, 24, 7, 4)}<path d="M50 50 V76" stroke="${INK}" stroke-width="7"/><path d="M50 74 L20 66 L8 94 M50 74 L34 92 M50 74 L66 92 M50 74 L80 66 L92 94" fill="none" ${TR}/>`],
+  retro: ["Retrovírus", "vir", "Tem RNA e usa a transcriptase reversa: RNA vira DNA, o caminho inverso. Ex.: HIV.", 154,
+    `${[0, 60, 120, 180, 240, 300].map((a) => `<g transform="rotate(${a} 50 50)"><path d="M50 14 V6" ${TR}/></g>`).join("")}${circ(50, 50, 37, "#8e5bd6")}<text x="50" y="42" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">RNA</text><path d="M30 52 H70 M36 46 L30 52 L36 58" fill="none" stroke="#ffcf5c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><text x="50" y="74" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">DNA</text>`],
+  mosquito: ["Arbovírus", "vir", "Transmitido por artrópodes, como mosquitos: dengue, zika, chikungunya e febre amarela.", 161,
+    `<ellipse cx="34" cy="28" rx="26" ry="10" fill="#dff3ff" ${TF} transform="rotate(-30 34 28)"/><ellipse cx="66" cy="26" rx="24" ry="9" fill="#dff3ff" ${TF} transform="rotate(26 66 26)"/><path d="M36 64 L20 90 M48 66 L44 94 M60 62 L78 90" fill="none" ${TR}/><ellipse cx="52" cy="52" rx="30" ry="13" fill="#4a4a68" ${TR} transform="rotate(10 52 52)"/><path d="M26 46 L4 40" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>${olho(30, 44, 5)}`],
+
+  // ---------- PROTOZOÁRIOS ----------
+  ameba: ["Ameba (rizópodo)", "pro", "Se locomove com pseudópodos, os “pés falsos”. Causa amebíase (Entamoeba histolytica).", 173,
+    `<path d="M16 28 C28 6 46 26 54 14 C70 0 86 22 74 38 C96 44 96 66 76 66 C84 90 58 96 48 78 C36 96 8 88 20 64 C0 58 2 34 16 28Z" fill="#7fd9c8" ${TR}/>${rosto(46, 46, 11, 6)}`],
+  flagelado: ["Flagelado", "pro", "Se locomove com um longo flagelo. Ex.: giárdia, tripanossoma e leishmania.", 173,
+    `<path d="M22 56 C8 28 62 8 72 34 C80 58 50 82 30 72 C26 70 24 62 22 56Z" fill="#b8e986" ${TR}/><path d="M28 70 C12 84 34 90 18 98" fill="none" ${TR}/>${rosto(48, 42, 9, 5)}`],
+  ciliado: ["Ciliado", "pro", "Se movimenta com cílios. Ex.: Balantidium.", 173,
+    `${Array.from({ length: 18 }, (_, i) => `<g transform="rotate(${i * 20} 50 50)"><path d="M50 18 V8" ${TF}/></g>`).join("")}<ellipse cx="50" cy="50" rx="34" ry="32" fill="#ffd166" ${TR}/>${rosto(50, 46, 11, 6)}`],
+  esporozoario: ["Esporozoário", "pro", "Sem organela de locomoção, é parasita obrigatório. Ex.: Plasmodium (malária) e Toxoplasma.", 173,
+    `<path d="M12 72 C10 30 60 8 90 22 C88 62 50 92 12 72Z" fill="#f4a3c0" ${TR}/>${circ(66, 36, 7, "#b3123f", TF)}${rosto(42, 56, 9, 5)}`],
+  cisto: ["Cisto", "pro", "Forma de transmissão: ingerido na água ou alimento, libera o trofozoíto no intestino.", 174,
+    `${circ(50, 50, 40, "#c9b08f")}${circ(50, 50, 29, "#f1e0c6")}<path d="M28 40 q6 -8 12 0 M60 40 q6 -8 12 0" fill="none" ${TF}/><path d="M44 58 q6 4 12 0" fill="none" ${TF}/><text x="74" y="22" font-size="14" font-weight="800" fill="${INK}">z</text>`],
+  barbeiro: ["Barbeiro", "pro", "Inseto que transmite a doença de Chagas (Trypanosoma cruzi).", 179,
+    `<path d="M50 22 L30 8 M50 22 L70 8 M28 44 L6 36 M72 44 L94 36 M26 60 L8 74 M74 60 L92 74" fill="none" ${TR}/><path d="M50 18 C78 26 80 70 50 94 C20 70 22 26 50 18Z" fill="#54382a" ${TR}/><path d="M34 56 L66 56 M38 70 L62 70" stroke="#ff9d5c" stroke-width="4"/>${olho(42, 34, 5)}${olho(58, 34, 5)}`],
+
+  // ---------- FUNGOS ----------
+  levedura: ["Levedura", "fun", "Fungo unicelular que se reproduz por brotamento. Ex.: Candida albicans.", 186,
+    `<ellipse cx="42" cy="56" rx="32" ry="30" fill="#f9e39c" ${TR}/>${circ(82, 26, 13, "#f9e39c")}${rosto(42, 52, 11, 6)}`],
+  bolor: ["Bolor", "fun", "Fungo pluricelular que forma hifas e micélios. Ex.: Aspergillus, da aspergilose.", 186,
+    `<path d="M50 96 V44 M50 72 L22 50 M50 62 L78 40 M22 50 V28 M78 40 V24 M50 44 V24" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>${[[50, 16], [22, 20], [78, 16]].map(([x, y]) => circ(x, y, 12, "#6aa8e0") + pontos([[x - 4, y - 3], [x + 4, y + 2], [x, y + 5]], 2, "#fff")).join("")}`],
+  cogumelo: ["Cogumelo", "fun", "Fungo macroscópico e pluricelular. O que vemos é só a estrutura reprodutiva.", 187,
+    `<path d="M36 52 H64 L68 90 C60 96 40 96 32 90Z" fill="#fff4dc" ${TR}/><path d="M8 54 C8 8 92 8 92 54 C70 62 30 62 8 54Z" fill="#e5383b" ${TR}/>${circ(32, 32, 7, "#fff", TF)}${circ(62, 26, 8, "#fff", TF)}${circ(78, 44, 5, "#fff", TF)}${rosto(50, 70, 8, 4)}`],
+  micelio: ["Micélio", "fun", "A rede de hifas, escondida no solo: o verdadeiro corpo do fungo.", 187,
+    `<path d="M0 46 H100" stroke="#6d4c33" stroke-width="4"/><rect y="46" width="100" height="54" fill="#caa57f"/><path d="M50 46 V62 M50 62 L26 76 L12 70 M26 76 L30 94 M50 62 L72 78 L90 68 M72 78 L66 94 M50 62 V88" fill="none" stroke="#fff4dc" stroke-width="3.5" stroke-linecap="round"/><path d="M42 26 H58 L60 46 H40Z" fill="#fff4dc" ${TF}/><path d="M28 28 C28 6 72 6 72 28Z" fill="#e5383b" ${TF}/>`],
+};
+function tubo(p) {
+  return `<rect x="30" y="6" width="40" height="88" rx="18" fill="#fff6e0" ${TR}/><rect x="30" y="6" width="40" height="12" fill="#6fd0c3" ${TF}/>${pontos(p, 4, "#6a2fc2")}<text x="72" y="16" font-size="13" font-weight="800" fill="#1d7f73">O₂</text>`;
+}
+const MASCOTE = { cel: "eucarionte", gen: "dna", san: "hemacia", imu: "macrofago", bac: "bacilo", vir: "viruse", pro: "ameba", fun: "cogumelo" };
+const ordemF = Object.keys(F);
+function fig(k, cls = "") {
+  return `<svg class="fig ${cls}" viewBox="0 0 100 100" aria-hidden="true">${F[k] ? F[k][4] : ""}</svg>`;
+}
+const figBomba = (cls = "") => `<svg class="fig ${cls}" viewBox="0 0 100 100" aria-hidden="true">${BOMBA}</svg>`;
+
+// Qual desenho reforça cada resposta. A primeira regra que combinar vence.
+const REGRAS = [
+  [/falciforme|meia lua/i, "falciforme"], [/ferropriva/i, "ferropriva"], [/megaloblást|b12/i, "megaloblastica"],
+  [/plaqueta|petéquia|trombo|coágul|hemostasia/i, "plaqueta"], [/neutrófilo/i, "neutrofilo"], [/monócito/i, "monocito"],
+  [/macrófago|fagocit/i, "macrofago"], [/eosinófilo/i, "eosinofilo"], [/basófilo|histamina/i, "basofilo"],
+  [/linfócito t\b/i, "linfT"], [/natural killer|célula nk|\bnk\b/i, "nk"], [/linfócito b\b/i, "linfB"],
+  [/célula-tronco/i, "tronco"], [/medula|hematopoié|hematopoét/i, "medula"], [/hemácia|eritrócito|hemoglobina|anemia|hemograma|arterial/i, "hemacia"],
+  [/chave-fechadura|antígeno/i, "chave"], [/anticorpo|imunoglobulina/i, "anticorpo"], [/vacina/i, "vacina"], [/sepse/i, "sepse"],
+  [/inata|barreira/i, "escudo"], [/linfócito/i, "linfB"],
+  [/gram-positiva|gram \+|violeta/i, "grampos"], [/gram-negativa|gram −|multirresist/i, "gramneg"], [/gram/i, "grampos"],
+  [/anaeróbi|necrótico/i, "anaerobia"], [/facultativ/i, "facultativa"], [/aeróbi/i, "aerobia"],
+  [/vibri/i, "vibriao"], [/espirilo/i, "espirilo"], [/estafilo/i, "estafilo"], [/\bcocos?\b/i, "coco"], [/bacilo|tuberculose/i, "bacilo"],
+  [/probiót|lactobacillus/i, "lactobacilo"], [/divisão binária|cissiparidade/i, "divisao"],
+  [/não envelopad/i, "virusn"], [/envelopad|espícula|envelope|capsídeo/i, "viruse"], [/icosa|adenovírus/i, "virusn"],
+  [/helicoidal|raiva/i, "helicoidal"], [/bacteriófago/i, "fago"], [/retrovírus|transcriptase|antirretro|integrase|aids|hiv/i, "retro"],
+  [/arbovírus|mosquito|dengue|zika|febre amarela/i, "mosquito"], [/barbeiro|chagas/i, "barbeiro"],
+  [/malária|plasmodium|esporozo|toxoplasma/i, "esporozoario"], [/amebí|ameba|entamoeba|pseudópod|rizópodo/i, "ameba"],
+  [/ciliad|balantidium/i, "ciliado"], [/flagelad|giardí|giárdia|leishmania/i, "flagelado"], [/cisto|trofozoíto/i, "cisto"],
+  [/levedura|candid|sapinho/i, "levedura"], [/bolor|aspergil/i, "bolor"], [/micélio|hifa/i, "micelio"], [/cogumelo/i, "cogumelo"],
+  [/mitocôndria|atp/i, "mitocondria"], [/neurônio/i, "neuronio"], [/\bdna\b/i, "dna"], [/\brna\b/i, "rna"],
+  [/proteína|colágeno|actina|queratina/i, "proteina"], [/eucarionte/i, "eucarionte"], [/procarionte/i, "procarionte"],
+];
+function figDaQuestao(q) {
+  if (q.fig) return q.fig;
+  const certa = q.t === "m" ? q.o[0] : q.t === "i" ? "" : "";
+  for (const txt of [certa, q.q, q.e || ""]) {
+    for (const [re, k] of REGRAS) if (txt && re.test(txt)) return k;
+  }
+  return MASCOTE[q.s];
+}
+
+// Diagramas de tocar. Cada parte clicável é um <g class="hs" data-k="...">.
+const DIAG = {
+  virus: `<svg class="diag" viewBox="0 0 300 240" role="img" aria-label="Estrutura do vírus">
+    <g class="hs" data-k="glico"><g fill="#ff6fb1" stroke="${INK}" stroke-width="3">${[0, 40, 80, 120, 160, 200, 240, 280, 320].map((a) => `<g transform="rotate(${a} 150 120)"><path d="M150 26 V8" stroke-width="6"/><circle cx="150" cy="8" r="9"/></g>`).join("")}</g></g>
+    <g class="hs" data-k="envelope"><circle cx="150" cy="120" r="88" fill="none" stroke="${INK}" stroke-width="26"/><circle cx="150" cy="120" r="88" fill="none" stroke="#ffd3e8" stroke-width="20"/></g>
+    <g class="hs" data-k="matriz"><circle cx="150" cy="120" r="64" fill="none" stroke="${INK}" stroke-width="24"/><circle cx="150" cy="120" r="64" fill="none" stroke="#7fd9c8" stroke-width="18"/></g>
+    <g class="hs" data-k="capsideo"><path d="M150 66 L197 93 V147 L150 174 L103 147 V93Z" fill="#8e5bd6" stroke="${INK}" stroke-width="3"/></g>
+    <g class="hs" data-k="genoma"><circle cx="150" cy="120" r="30" fill="#f4e9ff" stroke="${INK}" stroke-width="3"/><path d="M130 120 q7 -18 14 0 t14 0 t14 0" fill="none" stroke="#e5383b" stroke-width="5" stroke-linecap="round"/></g>
+  </svg>`,
+  bacteria: `<svg class="diag" viewBox="0 0 320 220" role="img" aria-label="Estrutura da bactéria">
+    <g class="hs" data-k="flagelo"><path d="M240 110 C262 70 278 150 312 100" fill="none" stroke="transparent" stroke-width="26"/><path d="M240 110 C262 70 278 150 312 100" fill="none" stroke="${INK}" stroke-width="6" stroke-linecap="round"/></g>
+    <g class="hs" data-k="fimbrias"><path d="M60 40 L46 10 M100 36 L92 6 M140 34 L140 4 M180 36 L188 6 M60 180 L46 210 M100 184 L92 214 M140 186 L140 216 M180 184 L188 214" stroke="transparent" stroke-width="20"/><path d="M60 40 L46 10 M100 36 L92 6 M140 34 L140 4 M180 36 L188 6 M60 180 L46 210 M100 184 L92 214 M140 186 L140 216 M180 184 L188 214" stroke="${INK}" stroke-width="4" stroke-linecap="round"/></g>
+    <g class="hs" data-k="capsula"><rect x="10" y="26" width="240" height="168" rx="82" fill="#e4f6c8" stroke="${INK}" stroke-width="3"/></g>
+    <g class="hs" data-k="parede"><rect x="30" y="46" width="200" height="128" rx="62" fill="#5aa832" stroke="${INK}" stroke-width="3"/></g>
+    <g class="hs" data-k="membrana"><rect x="48" y="64" width="164" height="92" rx="44" fill="#f4c25b" stroke="${INK}" stroke-width="3"/></g>
+    <g class="hs" data-k="citoplasma"><rect x="64" y="80" width="132" height="60" rx="28" fill="#fff4dc" stroke="${INK}" stroke-width="3"/></g>
+    <g class="hs" data-k="nucleoide"><rect x="86" y="88" width="50" height="44" fill="transparent"/><path d="M92 112 q8 -22 16 0 t16 0 t8 -4" fill="none" stroke="#b3123f" stroke-width="5" stroke-linecap="round"/></g>
+    <g class="hs" data-k="ribossomos"><rect x="146" y="90" width="40" height="40" rx="10" fill="transparent"/><g fill="#6a2fc2"><circle cx="154" cy="100" r="5"/><circle cx="172" cy="98" r="5"/><circle cx="162" cy="114" r="5"/><circle cx="178" cy="118" r="5"/></g></g>
+  </svg>`,
+  celula: `<svg class="diag" viewBox="0 0 320 240" role="img" aria-label="Célula eucarionte">
+    <g class="hs" data-k="membrana"><ellipse cx="160" cy="120" rx="152" ry="112" fill="none" stroke="${INK}" stroke-width="20"/><ellipse cx="160" cy="120" rx="152" ry="112" fill="none" stroke="#f4a3c0" stroke-width="14"/></g>
+    <g class="hs" data-k="citoplasma"><ellipse cx="160" cy="120" rx="142" ry="102" fill="#fff0d8"/></g>
+    <g class="hs" data-k="nucleo"><circle cx="160" cy="116" r="42" fill="#8e5bd6" stroke="${INK}" stroke-width="3"/><circle cx="170" cy="122" r="12" fill="#5d339f"/></g>
+    <g class="hs" data-k="rer"><path d="M112 72 q-24 44 0 90 M98 78 q-22 40 0 78" fill="none" stroke="transparent" stroke-width="16"/><path d="M112 72 q-24 44 0 90 M98 78 q-22 40 0 78" fill="none" stroke="#3f8fd6" stroke-width="8" stroke-linecap="round"/><g fill="${INK}"><circle cx="93" cy="96" r="2.5"/><circle cx="88" cy="118" r="2.5"/><circle cx="93" cy="140" r="2.5"/><circle cx="106" cy="94" r="2.5"/><circle cx="101" cy="116" r="2.5"/><circle cx="106" cy="142" r="2.5"/></g></g>
+    <g class="hs" data-k="mitocondria"><ellipse cx="48" cy="104" rx="30" ry="18" fill="#f46d6d" stroke="${INK}" stroke-width="3" transform="rotate(-20 48 104)"/><path d="M28 108 q5 -14 10 0 t10 0 t10 -2" fill="none" stroke="#fff" stroke-width="2.5"/></g>
+    <g class="hs" data-k="golgi"><rect x="214" y="44" width="62" height="46" fill="transparent"/><path d="M218 50 q26 -12 52 2 M218 64 q26 -12 52 2 M218 78 q26 -12 52 2" fill="none" stroke="#e09a1a" stroke-width="9" stroke-linecap="round"/></g>
+    <g class="hs" data-k="lisossomo"><circle cx="252" cy="136" r="19" fill="#6fd0c3" stroke="${INK}" stroke-width="3"/><circle cx="246" cy="132" r="3" fill="${INK}"/><circle cx="258" cy="140" r="3" fill="${INK}"/></g>
+    <g class="hs" data-k="rel"><rect x="164" y="168" width="84" height="40" fill="transparent"/><path d="M170 190 q12 -18 24 0 t24 0 t24 -2" fill="none" stroke="#4cc38a" stroke-width="9" stroke-linecap="round"/></g>
+  </svg>`,
+};
+const NOMES_DIAG = {
+  virus: { glico: "Glicoproteínas (espículas)", envelope: "Envelope", matriz: "Matriz viral", capsideo: "Capsídeo", genoma: "DNA ou RNA" },
+  bacteria: { flagelo: "Flagelo", fimbrias: "Fímbrias", capsula: "Cápsula", parede: "Parede celular", membrana: "Membrana plasmática", citoplasma: "Citoplasma", nucleoide: "Nucleoide", ribossomos: "Ribossomos" },
+  celula: { membrana: "Membrana plasmática", citoplasma: "Citoplasma", nucleo: "Núcleo", rer: "Retículo rugoso (RER)", mitocondria: "Mitocôndria", golgi: "Complexo de Golgi", lisossomo: "Lisossomo", rel: "Retículo liso (REL)" },
+};
+if (typeof module !== "undefined") module.exports = { F, DIAG, NOMES_DIAG, REGRAS, MASCOTE, figDaQuestao };
+
+"use strict";
+const DATA_PROVA = new Date(2026, 10, 5);
+const CHAVE = "antibomba.v1";
+const TAM_RODADA = 7, TAM_SIMULADO = 20, ACERTOS_DESARME = 2;
+const HORA = 3600e3;
+// A bomba desarmada volta a armar depois deste tempo, conforme a sequência de acertos.
+const REARME = { 2: 6 * HORA, 3: 18 * HORA };
+
+// ---------- utilidades ----------
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+function embaralhar(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function hash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(36); }
+function vibrar(ms) { try { if (E.vib && navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+
+Q.forEach((q) => { q.id = q.s + "-" + hash(q.q + (q.o ? q.o[0] : "") + (q.pares ? q.pares[0][1] : "") + q.p); });
+const POR_ID = Object.fromEntries(Q.map((q) => [q.id, q]));
+
+// ---------- estado salvo no celular ----------
+const NOVO = () => ({ q: {}, pts: 0, rev: {}, vib: true, rodada: null, melhorCombo: 0, alb: {} });
+let E = NOVO();
+let semMemoria = false;
+function carregar() { try { const b = localStorage.getItem(CHAVE); if (b) E = Object.assign(NOVO(), JSON.parse(b)); } catch (e) { semMemoria = true; } }
+function salvar() { try { localStorage.setItem(CHAVE, JSON.stringify(E)); } catch (e) { semMemoria = true; } }
+
+const reg = (id) => E.q[id] || (E.q[id] = { seq: 0, vistas: 0, erros: 0, ult: 0, errou: false });
+function desarmada(id, agora = Date.now()) {
+  const r = E.q[id]; if (!r || r.seq < ACERTOS_DESARME) return false;
+  const t = REARME[r.seq]; return !t || agora - r.ult < t;
+}
+function rearmada(id, agora = Date.now()) { const r = E.q[id]; return !!r && r.seq >= ACERTOS_DESARME && !desarmada(id, agora); }
+function comErro(id) { const r = E.q[id]; return !!r && r.errou; }
+function registrar(id, ok) {
+  const r = reg(id); r.vistas++; r.ult = Date.now();
+  if (ok) { r.seq++; r.errou = false; } else { r.seq = 0; r.erros++; r.errou = true; }
+}
+const pct = (lista) => (lista.length ? Math.round((100 * lista.filter((q) => desarmada(q.id)).length) / lista.length) : 0);
+function patente(p) { return p >= 90 ? "Comandante" : p >= 70 ? "Capitão" : p >= 40 ? "Sargento" : p >= 15 ? "Soldado" : "Recruta"; }
+
+// ---------- montagem da rodada ----------
+function bombasPrimeiro(l) { return embaralhar(l).sort((a, b) => (a.n === b.n ? 0 : a.n === "b" ? -1 : 1)); }
+function montar(pool, tam) {
+  const erros = embaralhar(pool.filter((q) => comErro(q.id)));
+  const rearm = embaralhar(pool.filter((q) => !comErro(q.id) && rearmada(q.id)));
+  const novas = bombasPrimeiro(pool.filter((q) => !E.q[q.id]));
+  const armadas = bombasPrimeiro(pool.filter((q) => E.q[q.id] && !comErro(q.id) && !rearmada(q.id) && !desarmada(q.id)));
+  const resto = embaralhar(pool.filter((q) => desarmada(q.id)));
+  const fila = [];
+  const pega = (lista, n) => { for (const q of lista) { if (fila.length >= tam || n <= 0) break; if (!fila.includes(q)) { fila.push(q); n--; } } };
+  pega(erros, Math.ceil(tam * 0.3));
+  pega(rearm, Math.ceil(tam * 0.2));
+  pega(armadas, Math.ceil(tam * 0.2));
+  pega(novas, tam);
+  pega(armadas, tam); pega(erros, tam); pega(rearm, tam); pega(resto, tam);
+  return embaralhar(fila);
+}
+
+// ---------- telas ----------
+const app = () => $("#app");
+const COR = { cel: "#16a2a0", gen: "#7d4bc2", san: "#c9324f", imu: "#2b6cf6", bac: "#4f9b2f", vir: "#c0398e", pro: "#d98a12", fun: "#b5562a" };
+function limpar(jogo, cor) {
+  app().innerHTML = "";
+  $("#nav").innerHTML = "";
+  $("#nav").className = "";
+  document.querySelectorAll(".fb,.veu").forEach((x) => x.remove());
+  document.body.classList.toggle("jogo", !!jogo);
+  document.documentElement.style.setProperty("--cor", cor || "#c9324f");
+  window.scrollTo(0, 0);
+}
+function html(tag, cls, inner) { const e = el(tag, cls); e.innerHTML = inner; return e; }
+function diasProva() { const h = new Date(); h.setHours(0, 0, 0, 0); return Math.round((DATA_PROVA - h) / 864e5); }
+
+function home() {
+  limpar();
+  const a = app();
+  const bombas = Q.filter((q) => q.n === "b");
+  const p = pct(bombas);
+  const head = el("header", "topo");
+  head.append(html("div", "logo", 'Esquadrão<br>Antibomba<small>Microbiologia</small>'));
+  const d = diasProva();
+  if (d >= 0) head.append(el("div", "conta", d === 0 ? "É hoje!" : d === 1 ? "Prova amanhã" : `Prova em ${d} dias`));
+  a.append(head);
+
+  const card = el("section", "quartel");
+  const anel = el("div", "anel"); anel.style.setProperty("--p", p); anel.append(el("span", "", p + "%"));
+  const info = el("div");
+  info.append(el("div", "q-t", patente(p)), el("div", "q-s", "das bombas desarmadas"));
+  const rearm = Q.filter((q) => rearmada(q.id)).length;
+  if (rearm) info.append(el("div", "aviso", `${rearm} bomba${rearm > 1 ? "s" : ""} voltou a armar`));
+  card.append(anel, info);
+  a.append(card);
+
+  const lin = el("div", "chips");
+  const nErros = Q.filter((q) => comErro(q.id)).length;
+  const chip = (t, s, fn, off, id) => { const b = el("button", "chip"); b.id = id; b.append(el("b", "", t), el("span", "", s)); b.onclick = fn; b.disabled = !!off; return b; };
+  lin.append(
+    chip("Meus erros", nErros ? `${nErros} para refazer` : "Nenhum por enquanto", () => iniciar(Q.filter((q) => comErro(q.id)), "erros"), !nErros, "b-erros"),
+    chip("Simulado", `${TAM_SIMULADO} questões, nota no fim`, simulado, false, "b-simulado")
+  );
+  a.append(lin);
+
+  a.append(el("h2", "tit-cam", "Caminho pelo corpo"));
+  a.append(caminho());
+
+  const rod = el("footer", "rodape");
+  const vb = el("button", "link", E.vib ? "Vibração ligada" : "Vibração desligada");
+  vb.onclick = () => { E.vib = !E.vib; salvar(); home(); };
+  const rs = el("button", "link", "Reiniciar e embaralhar"); rs.id = "b-reiniciar";
+  rs.onclick = () => {
+    if (rs.dataset.ok) { const vib = E.vib; E = NOVO(); E.vib = vib; salvar(); home(); return; }
+    rs.dataset.ok = "1"; rs.textContent = "Toque de novo: apaga o progresso"; rs.classList.add("perigo");
+  };
+  rod.append(vb, rs, el("div", "nota", `${Q.length} questões. 💣 página com bomba · 🧨 contexto do mesmo tema. Fonte: slides de Microbiologia.`));
+  if (semMemoria) rod.append(el("div", "aviso", "Este navegador não está salvando o progresso. Abra o link no Chrome ou Safari."));
+  a.append(rod);
+  nav();
+}
+function nav() {
+  const n = $("#nav"); n.className = "nav"; n.innerHTML = "";
+  const g = el("div");
+  const item = (rot, ic, fn, id) => { const b = el("button", "nav-b"); b.id = id; b.innerHTML = `<div class="ic">${fig(ic)}</div>`; b.append(el("span", "", rot)); b.onclick = fn; return b; };
+  const lidos = REVISAO.filter((r) => E.rev[r.id]).length;
+  const j = el("button", "jogar"); j.id = "b-jogar";
+  if (E.rodada) { j.append(el("span", "", "Continuar rodada"), el("small", "", `questão ${E.rodada.i + 1} de ${E.rodada.fila.length}`)); j.onclick = retomar; }
+  else { j.append(el("span", "", "Rodada rápida"), el("small", "", `${TAM_RODADA} questões, 2 min`)); j.onclick = () => iniciar(Q, "rapida"); }
+  g.append(item(`Álbum ${Object.keys(E.alb).length}/${ordemF.length}`, "linfB", album, "b-album"), j, item(`Revisar ${lidos}/${REVISAO.length}`, "sepse", revisao, "b-revisao"));
+  n.append(g);
+}
+function caminho() {
+  const ks = Object.keys(SETORES);
+  const c = el("div", "caminho");
+  // O vaso sanguíneo serpenteia entre os setores.
+  const Alt = 104, W = 100, y = (i) => Alt * i + 46;
+  let d = `M28 ${y(0)}`;
+  for (let i = 1; i < ks.length; i++) { const xA = i % 2 ? 28 : 72, xB = i % 2 ? 72 : 28; d += ` C${xA} ${y(i - 1) + 60} ${xB} ${y(i) - 60} ${xB} ${y(i)}`; }
+  const H = Alt * ks.length;
+  c.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" fill="none" stroke="${INK}" stroke-width="34" vector-effect="non-scaling-stroke"/><path d="${d}" fill="none" stroke="#c9324f" stroke-width="28" vector-effect="non-scaling-stroke"/><path d="${d}" fill="none" stroke="#ffffff55" stroke-width="10" stroke-dasharray="2 22" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+  ks.forEach((k, i) => {
+    const lista = Q.filter((q) => q.s === k), pc = pct(lista), s = SETORES[k];
+    const b = el("button", "setor " + (i % 2 ? "dir" : "esq"));
+    b.id = "s-" + k;
+    b.style.top = Alt * i + "px";
+    b.setAttribute("aria-label", `${s.nome}, ${pc} por cento`);
+    const med = el("div", "med"); med.style.setProperty("--p", pc); med.style.setProperty("--c", COR[k]);
+    med.innerHTML = `<div>${fig(MASCOTE[k])}</div>`;
+    const tx = el("div"); tx.append(el("span", "s-nome", s.nome), el("span", "s-pct", pc + "% desarmado"));
+    b.append(med, tx);
+    b.onclick = () => iniciar(lista, "setor");
+    c.append(b);
+  });
+  return c;
+}
+function barra(p) { const b = el("div", "barra"); const f = el("div", "barra-f"); f.style.width = p + "%"; b.append(f); return b; }
+function botao(tit, cls, fn) { const b = el("button", "btn " + cls); b.append(el("span", "b-t", tit)); b.onclick = fn; return b; }
+
+// ---------- álbum ----------
+function album() {
+  limpar();
+  const a = app();
+  const cab = el("div", "cab");
+  const x = el("button", "fechar", "✕"); x.setAttribute("aria-label", "Voltar"); x.onclick = home;
+  cab.append(x, el("h1", "", `Álbum: ${Object.keys(E.alb).length} de ${ordemF.length}`));
+  a.append(cab, el("p", "rev-intro", "Acertou uma questão, ganhou a figurinha. Toque em qualquer uma para estudar."));
+  Object.entries(SETORES).forEach(([k, s]) => {
+    a.append(el("h2", "album-s", s.nome));
+    const g = el("div", "cartas");
+    ordemF.filter((f) => F[f][1] === k).forEach((f) => {
+      const b = el("button", "carta" + (E.alb[f] ? "" : " fora"));
+      b.innerHTML = fig(f); b.append(el("span", "", F[f][0]));
+      b.onclick = () => ficha(f);
+      g.append(b);
+    });
+    a.append(g);
+  });
+}
+function ficha(f) {
+  const v = el("div", "veu"); v.onclick = (e) => { if (e.target === v) v.remove(); };
+  const c = el("div", "ficha");
+  c.innerHTML = fig(f);
+  c.append(el("h2", "", F[f][0]), el("div", "", F[f][2]), el("div", "rev-tag", `Slide p.${F[f][3]}${E.alb[f] ? "" : " · ainda não coletada"}`));
+  const b = el("button", "btn b-princ"); b.append(el("span", "b-t", "Fechar")); b.onclick = () => v.remove();
+  c.append(b); v.append(c); document.body.append(v);
+}
+
+// ---------- rodada ----------
+let R = null; // {modo, fila:[ids], i, ok, erro, combo, repetidas:{}, simRes:[]}
+function iniciar(pool, modo) {
+  const fila = montar(pool, TAM_RODADA).map((q) => q.id);
+  if (!fila.length) return home();
+  R = { modo, fila, i: 0, ok: 0, erro: 0, combo: 0, maxCombo: 0, repetidas: {}, simRes: [] };
+  E.rodada = R; salvar(); pergunta();
+}
+function retomar() { R = E.rodada; R.fila = R.fila.filter((id) => POR_ID[id]); if (R.i >= R.fila.length) return fim(); pergunta(); }
+function simulado() {
+  const obj = Q.filter((q) => q.t === "m" || q.t === "v");
+  const b = embaralhar(obj.filter((q) => q.n === "b")).slice(0, Math.round(TAM_SIMULADO * 0.8));
+  const c = embaralhar(obj.filter((q) => q.n === "c")).slice(0, TAM_SIMULADO - b.length);
+  R = { modo: "simulado", fila: embaralhar(b.concat(c)).map((q) => q.id), i: 0, ok: 0, erro: 0, combo: 0, maxCombo: 0, repetidas: {}, simRes: [] };
+  E.rodada = R; salvar(); pergunta();
+}
+function pergunta() {
+  const q = POR_ID[R.fila[R.i]];
+  limpar(true, COR[q.s]);
+  const a = app();
+  const ar = el("div", "arena"); ar.id = "arena";
+  const x = el("button", "fechar", "✕"); x.setAttribute("aria-label", "Sair e continuar depois"); x.onclick = home;
+  const her = html("div", "heroi", fig(MASCOTE[q.s]));
+  const pav = el("div", "pavio");
+  const pf = el("div", "pavio-f"); pf.style.width = (100 * R.i) / R.fila.length + "%";
+  pav.append(pf, el("div", "contador", R.combo >= 2 ? `${R.combo} seguidas` : `${R.i + 1} de ${R.fila.length}`));
+  ar.append(x, her, pav, html("div", "bomba", figBomba()));
+  ar.append(html("div", "estouro", `<svg class="fig" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4 L60 30 L88 16 L76 42 L98 52 L72 60 L84 88 L58 74 L46 98 L38 72 L10 84 L24 58 L2 46 L28 38 L16 12 L42 28Z" fill="#ffb340" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M50 30 L56 44 L72 42 L60 54 L66 70 L50 60 L36 70 L40 54 L28 44 L44 44Z" fill="#fff4b8"/></svg>`));
+  a.append(ar);
+  a.append(el("div", "tag", `${SETORES[q.s].nome} · ${q.n === "b" ? "💣" : "🧨"} p.${q.p}`), el("h1", "enunc", q.q));
+  const area = el("div", "area"); a.append(area);
+  ({ m: rM, v: rV, p: rP, s: rS, o: rO, i: rI, d: rD })[q.t](q, area);
+}
+function responder(q, ok, certaTxt) {
+  registrar(q.id, ok);
+  if (ok) { R.ok++; R.combo++; R.maxCombo = Math.max(R.maxCombo, R.combo); E.pts += 10 + Math.min(R.combo, 5) * 2; vibrar(20); }
+  else { R.erro++; R.combo = 0; vibrar([60, 40, 60]); }
+  if (R.modo === "simulado") {
+    R.simRes.push({ id: q.id, ok, certa: certaTxt });
+    salvar(); return proxima();
+  }
+  // Errou: a questão volta 3 posições à frente, embaralhada de novo (uma vez por rodada).
+  if (!ok && !R.repetidas[q.id] && R.modo !== "simulado") {
+    R.repetidas[q.id] = 1;
+    R.fila.splice(Math.min(R.i + 3, R.fila.length), 0, q.id);
+  }
+  const f = figDaQuestao(q);
+  const nova = ok && F[f] && !E.alb[f];
+  if (nova) E.alb[f] = 1;
+  salvar();
+  const a = app();
+  $("#arena").classList.add(ok ? "acertou" : "errou");
+  if (!ok) { a.classList.remove("treme"); void a.offsetWidth; a.classList.add("treme"); }
+  const fb = el("div", "fb " + (ok ? "fb-ok" : "fb-er"));
+  const g = el("div");
+  const topo = el("div", "fb-topo");
+  const tx = el("div");
+  tx.append(el("div", "fb-t", ok ? ["Desarmou!", "Isso aí!", "Na mosca!"][R.i % 3] : "Explodiu!"));
+  if (!ok && certaTxt) tx.append(el("div", "fb-c", "Certo: " + certaTxt));
+  if (q.e) tx.append(el("div", "fb-e", q.e));
+  tx.append(el("div", "fb-nome", F[f][0]));
+  topo.append(html("div", "fb-fig", fig(f)), tx);
+  g.append(topo);
+  if (nova) g.append(el("div", "fb-novo", `Figurinha nova no álbum: ${F[f][0]}`));
+  const n = el("button", "btn b-princ"); n.append(el("span", "b-t", "Próxima")); n.onclick = proxima;
+  g.append(n);
+  fb.append(g);
+  document.body.append(fb);
+}
+function proxima() {
+  document.querySelectorAll(".fb").forEach((x) => x.remove());
+  R.i++;
+  if (R.i >= R.fila.length) return fim();
+  salvar(); pergunta();
+}
+
+// múltipla escolha
+function rM(q, area) {
+  const certa = q.o[0];
+  const simu = R.modo === "simulado";
+  embaralhar(q.o).forEach((t) => {
+    const b = el("button", "op", t);
+    b.onclick = () => {
+      area.querySelectorAll("button").forEach((x) => { x.disabled = true; if (!simu && x.textContent === certa) x.classList.add("certa"); });
+      if (!simu && t !== certa) b.classList.add("errada");
+      responder(q, t === certa, certa);
+    };
+    area.append(b);
+  });
+}
+// verdadeiro ou falso
+function rV(q, area) {
+  const g = el("div", "vf");
+  [[true, "✅ Verdadeiro"], [false, "❌ Falso"]].forEach(([val, txt]) => {
+    const b = el("button", "op op-vf", txt);
+    b.onclick = () => {
+      const ok = val === q.a;
+      g.querySelectorAll("button").forEach((x) => (x.disabled = true));
+      if (R.modo !== "simulado") b.classList.add(ok ? "certa" : "errada");
+      responder(q, ok, q.a ? "Verdadeiro" : "Falso");
+    };
+    g.append(b);
+  });
+  area.append(g);
+}
+// pares: no máximo 4 por vez, sorteados, para caber na tela
+function rP(q, area) {
+  const pares = embaralhar(q.pares).slice(0, 4);
+  let sel = null, erros = 0, feitos = 0;
+  area.append(el("div", "dica", "Toque em um item de cada lado"));
+  const g = el("div", "pares"), esq = el("div", "col"), dir = el("div", "col");
+  const dirBtns = [];
+  embaralhar(pares).forEach((par) => {
+    const b = el("button", "par", par[0]); b.dataset.k = par[1];
+    b.onclick = () => { if (sel) sel.classList.remove("sel"); sel = b; b.classList.add("sel"); };
+    esq.append(b);
+  });
+  embaralhar(pares).forEach((par) => {
+    const b = el("button", "par par-d", par[1]);
+    b.onclick = () => {
+      if (!sel) { b.classList.add("pisca"); setTimeout(() => b.classList.remove("pisca"), 300); return; }
+      if (sel.dataset.k === par[1]) {
+        [sel, b].forEach((x) => { x.classList.remove("sel"); x.classList.add("feito"); x.disabled = true; });
+        sel = null; feitos++; vibrar(15);
+        if (feitos === pares.length) responder(q, erros === 0, erros ? `${pares.length} pares ligados, com ${erros} tropeço${erros > 1 ? "s" : ""}` : null);
+      } else {
+        erros++; vibrar(50);
+        const s = sel; [s, b].forEach((x) => x.classList.add("errada"));
+        setTimeout(() => [s, b].forEach((x) => x.classList.remove("errada")), 350);
+      }
+    };
+    dirBtns.push(b); dir.append(b);
+  });
+  g.append(esq, dir); area.append(g);
+}
+// separar: um item por vez, no máximo 5
+function rS(q, area) {
+  const itens = embaralhar(q.itens).slice(0, 5);
+  let i = 0, erros = 0;
+  const corpo = el("div", "sep");
+  const item = el("div", "sep-item"), prog = el("div", "dica");
+  const btns = el("div", "sep-cats");
+  const mostra = () => { item.textContent = itens[i][0]; prog.textContent = `${i + 1} de ${itens.length}`; };
+  q.cats.forEach((c, idx) => {
+    const b = el("button", "op op-cat", c);
+    b.onclick = () => {
+      const certo = itens[i][1] === idx;
+      if (!certo) { erros++; vibrar(50); }
+      const alvo = btns.children[itens[i][1]];
+      alvo.classList.add("certa"); if (!certo) b.classList.add("errada");
+      [...btns.children].forEach((x) => (x.disabled = true));
+      setTimeout(() => {
+        [...btns.children].forEach((x) => { x.disabled = false; x.classList.remove("certa", "errada"); });
+        i++;
+        if (i >= itens.length) { btns.remove(); item.remove(); prog.remove(); responder(q, erros === 0, erros ? `${itens.length - erros} de ${itens.length} no lugar certo` : null); }
+        else mostra();
+      }, certo ? 280 : 750);
+    };
+    btns.append(b);
+  });
+  mostra(); corpo.append(prog, item, btns); area.append(corpo);
+}
+// ordem: toque na sequência certa
+function rO(q, area) {
+  let prox = 0, erros = 0;
+  area.append(el("div", "dica", "Toque do primeiro para o último"));
+  embaralhar(q.passos).forEach((t) => {
+    const b = el("button", "op", t);
+    b.onclick = () => {
+      if (t === q.passos[prox]) {
+        b.disabled = true; b.classList.add("certa"); prox++; b.textContent = prox + ". " + t; vibrar(15);
+        if (prox === q.passos.length) responder(q, erros === 0, erros ? q.passos.join(" → ") : null);
+      } else {
+        erros++; vibrar(50); b.classList.add("errada"); setTimeout(() => b.classList.remove("errada"), 350);
+      }
+    };
+    area.append(b);
+  });
+}
+
+// escolher a imagem: o nome só aparece depois de responder
+function rI(q, area) {
+  const g = el("div", "imgs" + (q.op.length === 3 ? " tres" : ""));
+  const certa = q.op[0];
+  embaralhar(q.op).forEach((k, n) => {
+    const b = el("button", "op-img"); b.dataset.k = k;
+    b.setAttribute("aria-label", "Imagem " + (n + 1));
+    b.innerHTML = fig(k); const nome = el("span"); b.append(nome);
+    b.onclick = () => {
+      g.querySelectorAll("button").forEach((x) => { x.disabled = true; x.querySelector("span").textContent = F[x.dataset.k][0]; if (x.dataset.k === certa) x.classList.add("certa"); });
+      if (k !== certa) b.classList.add("errada");
+      responder(q, k === certa, F[certa][0]);
+    };
+    g.append(b);
+  });
+  area.append(g);
+}
+// tocar na estrutura do desenho
+function rD(q, area) {
+  const box = html("div", "diag-box", DIAG[q.diag]);
+  const rot = el("div", "rotulo", "Toque no desenho");
+  box.append(rot); area.append(box);
+  let fim = false;
+  box.querySelector("svg").addEventListener("click", (e) => {
+    const h = e.target.closest(".hs"); if (!h || fim) return;
+    fim = true;
+    const ok = h.dataset.k === q.alvo;
+    const nomes = NOMES_DIAG[q.diag];
+    box.querySelector(`.hs[data-k="${q.alvo}"]`).classList.add("alvo");
+    if (!ok) h.classList.add("errada");
+    rot.textContent = ok ? nomes[q.alvo] : `Você tocou: ${nomes[h.dataset.k]}`;
+    responder(q, ok, nomes[q.alvo]);
+  });
+}
+
+// ---------- fim ----------
+function fim() {
+  const r = R; E.rodada = null; E.melhorCombo = Math.max(E.melhorCombo, r.maxCombo); salvar();
+  limpar();
+  const a = app();
+  if (r.modo === "simulado") return fimSimulado(r);
+  const tot = r.ok + r.erro;
+  a.append(html("div", "fim-ico", r.ok >= r.erro ? fig(MASCOTE[POR_ID[r.fila[0]].s]) : figBomba()));
+  a.append(el("h1", "enunc centro", r.erro === 0 ? "Rodada limpa!" : r.ok >= r.erro ? "Bom trabalho!" : "Vamos de novo?"));
+  const res = el("section", "painel");
+  res.append(el("div", "pct", `${r.ok}/${tot}`), el("div", "pct-txt", `acertos · melhor sequência: ${r.maxCombo}`));
+  const pB = pct(Q.filter((q) => q.n === "b"));
+  res.append(el("div", "pct-txt", `${pB}% das bombas desarmadas · ${E.pts} pontos · álbum ${Object.keys(E.alb).length}/${ordemF.length}`), barra(pB));
+  a.append(res);
+  const m = r.modo;
+  a.append(botao("Mais uma", "b-princ", () => iniciar(m === "setor" ? Q.filter((q) => q.s === POR_ID[r.fila[0]].s) : Q, m === "setor" ? "setor" : "rapida")));
+  a.append(botao("Início", "b-sec", home));
+}
+function fimSimulado(r) {
+  const a = app();
+  const nota = (r.ok * 10) / r.simRes.length;
+  a.append(html("div", "fim-ico", fig(nota >= 7 ? "linfT" : "cisto")));
+  a.append(el("h1", "enunc centro", "Nota " + nota.toFixed(1).replace(".", ",")));
+  const pan = el("section", "painel");
+  Object.entries(SETORES).forEach(([k, s]) => {
+    const l = r.simRes.filter((x) => POR_ID[x.id].s === k);
+    if (!l.length) return;
+    const ok = l.filter((x) => x.ok).length;
+    const li = el("div", "sim-lin"); li.append(el("span", "", s.nome), el("span", ok === l.length ? "verde" : "vermelho", `${ok}/${l.length}`));
+    pan.append(li);
+  });
+  a.append(pan);
+  const errs = r.simRes.filter((x) => !x.ok);
+  if (errs.length) {
+    a.append(el("h2", "claro", "O que você errou"));
+    errs.forEach((x) => {
+      const q = POR_ID[x.id];
+      const c = el("div", "rev-card");
+      c.append(el("div", "rev-tag", `${SETORES[q.s].nome} · p.${q.p}`), el("div", "rev-q", q.q), el("div", "rev-ok", "Certo: " + x.certa));
+      if (q.e) c.append(el("div", "fb-e", q.e));
+      a.append(c);
+    });
+  }
+  a.append(botao("Início", "b-princ", home));
+}
+
+// ---------- sessão final ----------
+function revisao() {
+  limpar();
+  const a = app();
+  const bar = el("div", "cab");
+  const x = el("button", "fechar", "✕"); x.setAttribute("aria-label", "Voltar"); x.onclick = home;
+  bar.append(x, el("h1", "", "Revisar com a professora"));
+  a.append(bar);
+  a.append(el("p", "rev-intro", "Estes pontos do material parecem conflitar com a literatura ou com outro slide. Eles não contam ponto nem entram no jogo. Confirme com a professora o que vale para a prova."));
+  REVISAO.slice().sort((p, q) => (q.bomba ? 1 : 0) - (p.bomba ? 1 : 0)).forEach((r) => {
+    const c = el("div", "rev-card");
+    c.append(el("div", "rev-tag", `${r.bomba ? "💣" : "🧨"} p.${r.pag}`), el("div", "rev-q", r.pergunta));
+    const ver = el("button", "op", "Ver o que conferir");
+    const corpo = el("div", "rev-corpo");
+    corpo.hidden = true;
+    const bloco = (t, txt, cls) => { const d = el("div", "rev-b " + cls); d.append(el("strong", "", t), el("span", "", txt)); return d; };
+    corpo.append(bloco("O slide diz", r.slide, "b-sl"), bloco("Conferência", r.conferencia, "b-cf"), bloco("Revisão indicada", r.indicacao, "b-in"));
+    ver.onclick = () => { corpo.hidden = !corpo.hidden; ver.textContent = corpo.hidden ? "Ver o que conferir" : "Fechar"; if (!E.rev[r.id]) { E.rev[r.id] = 1; salvar(); } };
+    c.append(ver, corpo);
+    a.append(c);
+  });
+  a.append(botao("Início", "b-princ", home));
+}
+
+carregar();
+home();
+if ("serviceWorker" in navigator && location.protocol === "https:") { navigator.serviceWorker.register("sw.js").catch(() => {}); }
+</script>
+</body>
+</html>
